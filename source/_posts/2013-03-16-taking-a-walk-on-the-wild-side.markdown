@@ -3,7 +3,7 @@ layout: post
 title: "Taking a walk on the wild side"
 date: 2013-03-16 12:08
 comments: true
-categories: 
+categories: [AngularJS, Javascript, Twitter Bootstrap]
 ---
 Having spent nearly 10 years doing my best to avoid wrestling with the client-side web, the necessity to better prepare myself for a new future (think tech startup) means I've begun some serious dabbling on "the wild side".
 

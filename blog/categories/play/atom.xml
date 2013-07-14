@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Play | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/play/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-07-14T13:26:00+01:00</updated>
+  <updated>2013-07-14T13:39:11+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -12,6 +12,137 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Access logs in Play! using RequestHeader tags]]></title>
+    <link href="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/"/>
+    <updated>2013-07-14T13:30:00+01:00</updated>
+    <id>http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags</id>
+    <content type="html"><![CDATA[<h2>Log files as event streams</h2>
+
+<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share something that I &lsquo;discovered&rsquo; in Play that, whilst not clearly documented &ndash; I found it by digging through the source &ndash; is particularly handy for this use case.</p>
+
+<p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
+
+<h2>RequestHeader tags</h2>
+
+<p>So&hellip;back to this feature I discovered &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
+
+<p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">AccessLogFilter</span> <span class="k">extends</span> <span class="nc">EssentialFilter</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">val</span> <span class="n">dateTimeFormat</span> <span class="k">=</span> <span class="nc">ISODateTimeFormat</span><span class="o">.</span><span class="n">ordinalDateTimeNoMillis</span><span class="o">()&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">next</span><span class="k">:</span> <span class="kt">EssentialAction</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EssentialAction</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">rh</span><span class="k">:</span> <span class="kt">RequestHeader</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>  <span class="k">val</span> <span class="n">startTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">logTime</span><span class="o">(</span><span class="n">result</span><span class="k">:</span> <span class="kt">PlainResult</span><span class="o">)</span><span class="k">:</span> <span class="kt">Result</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">val</span> <span class="n">event</span> <span class="k">=</span> <span class="nc">Json</span><span class="o">.</span><span class="n">obj</span><span class="o">(</span>
+</span><span class='line'>      <span class="s">&quot;uri&quot;</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">rh</span><span class="o">.</span><span class="n">uri</span><span class="o">,</span>
+</span><span class='line'>      <span class="s">&quot;timestamp&quot;</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">dateTimeFormat</span><span class="o">.</span><span class="n">print</span><span class="o">(</span><span class="k">new</span> <span class="nc">DateTime</span><span class="o">),</span>
+</span><span class='line'>      <span class="s">&quot;execution_time&quot;</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="o">),</span>
+</span><span class='line'>      <span class="s">&quot;status&quot;</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">result</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">status</span><span class="o">,</span>
+</span><span class='line'>      <span class="s">&quot;tags&quot;</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nc">Json</span><span class="o">.</span><span class="n">toJson</span><span class="o">(</span><span class="n">rh</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">entry</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">toLowerCase</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_2</span><span class="o">))</span>
+</span><span class='line'>    <span class="o">)</span>
+</span><span class='line'>    <span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="nc">Json</span><span class="o">.</span><span class="n">stringify</span><span class="o">(</span><span class="n">event</span><span class="o">))</span>
+</span><span class='line'>    <span class="n">result</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">next</span><span class="o">(</span><span class="n">rh</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">case</span> <span class="n">plain</span><span class="k">:</span> <span class="kt">PlainResult</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">logTime</span><span class="o">(</span><span class="n">plain</span><span class="o">)</span>
+</span><span class='line'>    <span class="k">case</span> <span class="n">async</span><span class="k">:</span> <span class="kt">AsyncResult</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">async</span><span class="o">.</span><span class="n">transform</span><span class="o">(</span><span class="n">logTime</span><span class="o">)</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>On top of adding the tags (and some other available request info) to the JSON object, you&rsquo;ll see the execution time is also captured alongside. To enable this filter, we simply create a custom <code>Global.scala</code>, in the default package:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">Global</span> <span class="k">extends</span> <span class="nc">WithFilters</span><span class="o">(</span><span class="nc">AccessLogFilter</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Here is an example log line generated by this filter (prettified for readability):</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="err">&amp;ldquo;uri&amp;rdquo;:&amp;ldquo;/search/*&amp;rdquo;,</span>
+</span><span class='line'>   <span class="err">&amp;ldquo;timestamp&amp;rdquo;:&amp;ldquo;2013-194T18:14:27+01:00&amp;rdquo;,</span>
+</span><span class='line'>   <span class="err">&amp;ldquo;execution_time&amp;rdquo;:20,</span>
+</span><span class='line'>   <span class="err">&amp;ldquo;status&amp;rdquo;:200,</span>
+</span><span class='line'>   <span class="err">&amp;ldquo;tags&amp;rdquo;:{&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">&lt;pre&gt;&lt;code&gt;</span>  <span class="nt">&quot;route_verb&quot;</span><span class="p">:</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nt">&quot;route_action_method&quot;</span><span class="p">:</span><span class="s2">&quot;search&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nt">&quot;route_pattern&quot;</span><span class="p">:</span><span class="s2">&quot;/search/$searchString&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nt">&quot;route_controller&quot;</span><span class="p">:</span><span class="s2">&quot;controllers.Application&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nt">&quot;route_comments&quot;</span><span class="p">:</span><span class="s2">&quot;Root action&quot;</span>
+</span><span class='line'><span class="err">&lt;/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">&lt;p&gt;</span>   <span class="p">}</span>
+</span><span class='line'><span class="err">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>One of the most useful things about capturing the tags is that you get easy access to &lsquo;normalized&rsquo; actions/endpoints. So, it&rsquo;s immediately easy (e.g. in a tool like Kibana) to pick all log events related to a specific action. The URI alone is not good enough because parameterized path variables, or query string parameters, lead to non-unique URI representations for the same logical action bindings.</p>
+
+<p>As the filter wraps every request, you will see log lines generated for static assets too &ndash; something that is most likely too verbose for most use cases. It&rsquo;s not too hard to apply filtering to the URI extension to ignore assets, but I left it out of the example code for the sake of cleanliness.</p>
+
+<p>Keep on logging!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch]]></title>

@@ -12,7 +12,7 @@ So, I've decided to contribute an Activator Template to TypeSafe (will submit so
 
 What I came up with is slightly contrived - a very basic real-time log entry search tool - but I think it provides a really nice base for apps that want to integrate this bunch of technologies.
 
-{% img /images/real-time-search.png 600 264 %}
+[{% img center /images/real-time-search.png 600 264 %}](/images/real-time-search.png)
 
 All the code for the application is available on Github [here](https://github.com/drewzilla/realtime-search). In this post, I've attempted to dissect the Activator Template tutorial I've written and regurgitate it in blog form.
 

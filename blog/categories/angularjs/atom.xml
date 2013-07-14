@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Responsibly Sourced]]></title>
-  <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: AngularJS | Responsibly Sourced]]></title>
+  <link href="http://DrewEaster.github.io/blog/categories/angularjs/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
   <updated>2013-07-14T13:07:55+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
@@ -20,11 +20,11 @@
     <id>http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch</id>
     <content type="html"><![CDATA[<h1>Introduction</h1>
 
-<p>So, I&rsquo;ve decided to contribute an Activator Template to TypeSafe (will submit soon, promise!). Having recently become more and more involved in Elasticsearch, I saw a great opportunity to put together a neat &ldquo;reactive&rdquo; application combining Play &amp; Akka with the &ldquo;bonsai cool&#8221; <a href="http://www.elasticsearch.org/guide/reference/api/percolate/">percolation</a> feature of Elasticsearch. Then, to put a cherry on top, use AngularJS on the client-side to create a dynamically updating UI.</p>
+<p>So, I&rsquo;ve decided to contribute an Activator Template to TypeSafe (will submit soon, promise!). Having recently become more and more involved in Elasticsearch, I saw a great opportunity to put together a neat &ldquo;reactive&rdquo; application combining Play &amp; Akka with the &ldquo;bonsai cool" <a href="http://www.elasticsearch.org/guide/reference/api/percolate/">percolation</a> feature of Elasticsearch. Then, to put a cherry on top, use AngularJS on the client-side to create a dynamically updating UI.</p>
 
 <p>What I came up with is slightly contrived &ndash; a very basic real-time log entry search tool &ndash; but I think it provides a really nice base for apps that want to integrate this bunch of technologies.</p>
 
-<p><img src="http://DrewEaster.github.io/images/real-time-search.png/600/264"></p>
+<p><img src="/images/real-time-search.png/600/264"></p>
 
 <p>All the code for the application is available on Github <a href="https://github.com/drewzilla/realtime-search">here</a>. In this post, I&rsquo;ve attempted to dissect the Activator Template tutorial I&rsquo;ve written and regurgitate it in blog form.</p>
 
@@ -59,7 +59,7 @@
 
 <p>The actor responds to a <code>StartSearch</code> message by &lsquo;replying&rsquo; with an <code>Enumerator</code> to the sender. The <code>Enumerator</code> wraps a unicast channel to which log entries are pushed that match the query string sent within the message. Let&rsquo;s take a look at some code:</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -76,25 +76,32 @@
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">startSearching</span><span class="o">(</span><span class="n">startSearch</span><span class="k">:</span> <span class="kt">StartSearch</span><span class="o">)</span> <span class="k">=</span>
-</span><span class='line'>    <span class="nc">Concurrent</span><span class="o">.</span><span class="n">unicast</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">](</span>
-</span><span class='line'>        <span class="n">onStart</span> <span class="k">=</span> <span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">channels</span> <span class="o">+=</span> <span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">)</span>
-</span><span class='line'>            <span class="n">elasticSearchActor</span> <span class="o">!</span> <span class="n">startSearch</span>
-</span><span class='line'>        <span class="o">},</span>
-</span><span class='line'>        <span class="n">onComplete</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">},</span>
-</span><span class='line'>        <span class="n">onError</span> <span class="k">=</span> <span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="n">in</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">).</span><span class="n">onDoneEnumerating</span><span class="o">(</span>
-</span><span class='line'>        <span class="n">callback</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">}</span>
-</span><span class='line'>    <span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">startSearching</span><span class="o">(</span><span class="n">startSearch</span><span class="k">:</span> <span class="kt">StartSearch</span><span class="o">)</span> <span class="o">=&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nc">Concurrent</span><span class="o">.</span><span class="n">unicast</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">](</span>
+</span><span class='line'>    <span class="n">onStart</span> <span class="k">=</span> <span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">channels</span> <span class="o">+=</span> <span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="n">c</span><span class="o">)</span>
+</span><span class='line'>        <span class="n">elasticSearchActor</span> <span class="o">!</span> <span class="n">startSearch</span>
+</span><span class='line'>    <span class="o">},</span>
+</span><span class='line'>    <span class="n">onComplete</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">},</span>
+</span><span class='line'>    <span class="n">onError</span> <span class="k">=</span> <span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="n">in</span><span class="o">)</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">).</span><span class="n">onDoneEnumerating</span><span class="o">(</span>
+</span><span class='line'>    <span class="n">callback</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>The Play Iteratees library has the very handy <code>Concurrent</code> utilities. In this case, <code>Concurrent.unicast</code> is called to create an <code>Enumerator</code> that encloses a <code>Concurrent.Channel</code>. When the channel starts (<code>onStart</code>), it is stored in a map local to the actor (using UUID as key) and the <code>StartSearch</code> message is forwarded onto the <code>ElasticSearchActor</code> where the query will be percolated in Elasticsearch. It&rsquo;s worth noting that this code is not production ready &ndash; it ought to be a transactional operation, i.e. we should only store the channel once we know Elasticsearch has successfully percolated the query. You will notice that a <code>StopSearch</code> message is sent to <code>self</code> such that the channel is removed from the local map, and the percolated query is deleted, when the channel is no longer useful (i.e. is closed by the client, or an error occurs).</p>
 
@@ -102,22 +109,27 @@
 
 <p>The actor will receive a <code>SearchMatch</code> message when a log entry has matched a percolated query.</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">broadcastMatch</span><span class="o">(</span><span class="n">searchMatch</span><span class="k">:</span> <span class="kt">SearchMatch</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'>    <span class="n">searchMatch</span><span class="o">.</span><span class="n">matchingChannelIds</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
-</span><span class='line'>        <span class="n">channels</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="k">_</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
-</span><span class='line'>            <span class="k">_</span> <span class="n">push</span> <span class="n">searchMatch</span><span class="o">.</span><span class="n">logEntry</span><span class="o">.</span><span class="n">data</span>
-</span><span class='line'>        <span class="o">}</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">broadcastMatch</span><span class="o">(</span><span class="n">searchMatch</span><span class="k">:</span> <span class="kt">SearchMatch</span><span class="o">)</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">searchMatch</span><span class="o">.</span><span class="n">matchingChannelIds</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">channels</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="k">_</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">_</span> <span class="n">push</span> <span class="n">searchMatch</span><span class="o">.</span><span class="n">logEntry</span><span class="o">.</span><span class="n">data</span>
 </span><span class='line'>    <span class="o">}</span>
 </span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>On receipt of the message, each matching id is iterated over and the corresponding channel is retrieved from the local map. The log entry is then pushed to the channel, and thus onto the client.</p>
 
@@ -133,10 +145,9 @@
 
 <p>There&rsquo;s one little important gotcha this code has avoided &ndash; closing over the <code>sender</code> ref in an asynchronous callback block. The <code>sender</code> ref is part of the shared mutable state of the actor and so, if the actor were to reply to the sender in the percolate callback, a race condition would be encountered if another thread had modified the actor&rsquo;s state before the percolation call to Elasticsearch had completed. This race condition has been avoided by ensuring to &lsquo;freeze&rsquo; the <code>sender</code> ref, by sending it to a private function:</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">percolate</span><span class="o">(</span><span class="n">logJson</span><span class="k">:</span> <span class="kt">JsValue</span><span class="o">,</span> <span class="n">requestor</span><span class="k">:</span> <span class="kt">ActorRef</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>and close over the parameter instead.</p>
 
@@ -148,22 +159,27 @@
 
 <p>As most of the server-side logic exists within the actors, the single Play controller is very simple. The most interesting aspect of the controller is the action that opens an event stream connected with the client:</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">search</span><span class="o">(</span><span class="n">searchString</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Action</span> <span class="o">{</span>
-</span><span class='line'>    <span class="nc">Async</span> <span class="o">{</span>
-</span><span class='line'>        <span class="o">(</span><span class="n">searchActor</span> <span class="o">?</span> <span class="nc">StartSearch</span><span class="o">(</span><span class="n">searchString</span> <span class="k">=</span> <span class="n">searchString</span><span class="o">)).</span><span class="n">map</span> <span class="o">{</span>
-</span><span class='line'>            <span class="k">case</span> <span class="nc">SearchFeed</span><span class="o">(</span><span class="n">out</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Ok</span><span class="o">.</span><span class="n">stream</span><span class="o">(</span><span class="n">out</span> <span class="o">&amp;&gt;</span> <span class="nc">EventSource</span><span class="o">()).</span><span class="n">as</span><span class="o">(</span><span class="s">&quot;text/event-stream&quot;</span><span class="o">)</span>
-</span><span class='line'>        <span class="o">}</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">search</span><span class="o">(</span><span class="n">searchString</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Action</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nc">Async</span> <span class="o">{</span>
+</span><span class='line'>    <span class="o">(</span><span class="n">searchActor</span> <span class="o">?</span> <span class="nc">StartSearch</span><span class="o">(</span><span class="n">searchString</span> <span class="k">=</span> <span class="n">searchString</span><span class="o">)).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="nc">SearchFeed</span><span class="o">(</span><span class="n">out</span><span class="o">)</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nc">Ok</span><span class="o">.</span><span class="n">stream</span><span class="o">(</span><span class="n">out</span> <span class="o">&amp;</span><span class="n">amp</span><span class="o">;&amp;</span><span class="n">gt</span><span class="o">;</span> <span class="nc">EventSource</span><span class="o">()).</span><span class="n">as</span><span class="o">(</span><span class="s">&quot;text/event-stream&quot;</span><span class="o">)</span>
 </span><span class='line'>    <span class="o">}</span>
 </span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>The most important thing to note is the use of the Akka &lsquo;ask&rsquo; pattern of message exchange (notice the use of &lsquo;?&rsquo; instead of &lsquo;!&rsquo;). This differs from the more typical fire-and-forget approach in that we&rsquo;re able to asynchronously pick up a reply from the recipient actor. In this scenario, a <code>StartSearch</code> message is sent to the <code>MainSearchActor</code> which replies with an <code>Enumerator</code> used to stream search results to the client. Given the use of the &lsquo;ask&rsquo; pattern, we wrap the action logic in an <code>Async</code> block &ndash; so not to hold up other requests &ndash; rather than blocking until the <code>Future</code> yields a result.</p>
 
@@ -183,29 +199,33 @@
 
 <p>Firstly, the opening <code>&lt;div&gt;</code> is linked to the controller <code>SearchCtrl</code> that subsequently enables the automagical databinding power of AngularJS. A simple search form captures an Apache Lucene formatted query string. A search can be started by clicking on the &lsquo;Search&rsquo; button which invokes the <code>startSearching()</code> function defined in the controller. Finally, you can see the use of AngularJS two-way databinding to render matching search results contained within the view model (only displays the latest 10 matches):</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">&lt;</span><span class="n">tr</span> <span class="n">ng</span><span class="o">-</span><span class="n">repeat</span><span class="o">=</span><span class="s">&quot;searchResult in searchResults | limitTo:10&quot;</span><span class="o">&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h2>The AngularJS Controller</h2>
 
 <p>The AngularJS controller is fairly straightforward. The key part is handling a new search:</p>
 
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">startSearching</span> <span class="k">=</span> <span class="n">function</span> <span class="o">()</span> <span class="o">{</span>
-</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">stopSearching</span><span class="o">()</span>
-</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchResults</span> <span class="k">=</span> <span class="o">[];</span>
-</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EventSource</span><span class="o">(</span><span class="s">&quot;/search/&quot;</span> <span class="o">+</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">searchString</span><span class="o">);</span>
-</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span><span class="o">.</span><span class="n">addEventListener</span><span class="o">(</span><span class="s">&quot;message&quot;</span><span class="o">,</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">addSearchResult</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
-</span><span class='line'><span class="o">};</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">startSearching</span> <span class="k">=</span> <span class="n">function</span> <span class="o">()</span> <span class="o">{&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="nc">$scope</span><span class="o">.</span><span class="n">stopSearching</span><span class="o">()</span>
+</span><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">searchResults</span> <span class="k">=</span> <span class="o">[];</span>
+</span><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EventSource</span><span class="o">(</span><span class="s">&quot;/search/&quot;</span> <span class="o">+</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">searchString</span><span class="o">);</span>
+</span><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span><span class="o">.</span><span class="n">addEventListener</span><span class="o">(</span><span class="s">&quot;message&quot;</span><span class="o">,</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">addSearchResult</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;};</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Firstly, an existing search is stopped (if running) and the results model cleared (will automagically clear any existing results from the HTML markup). Secondly, an event stream connection is made to the server and an event listener is added that pushes matching search results into the model as they arrive from the server.</p>
 
@@ -237,23 +257,6 @@
 <p>I definitely see this going to a second date, and beyond.</p>
 
 <p>On a final note, I do feel that <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> deserves a special mention here as well. There&rsquo;s no doubt that I suck at CSS, and I truly mean that. But, with Bootstrap, no longer must server-side developers walk naked and exposed in the presentational side of the web. I don&rsquo;t care for CSS &ndash; I don&rsquo;t think I ever will &ndash; but with Bootstrap I&rsquo;ve now got half a chance of making web apps that don&rsquo;t only work good, but look good at the same time.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Play2 &amp; Scala – A new beginning]]></title>
-    <link href="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/"/>
-    <updated>2012-10-14T11:49:00+01:00</updated>
-    <id>http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning</id>
-    <content type="html"><![CDATA[<p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
-
-<p>The murmurings for this new chapter began a few weeks ago when I enrolled on Martin Odersky’s “Functional Programming Principles in Scala” course – a fantastic FREE online course that runs for seven weeks, supported by <a href="http://www.epfl.ch/">EPFL</a> in Switzerland. For sure, I’ve been well aware of the rise of Scala within the industry but had never gotten round to really indulging in this exciting language (except, maybe, for getting through a few chapters of <a href="http://www.artima.com/shop/programming_in_scala_2ed/">Programming in Scala</a> on my Kindle). The same goes for the <a href="http://www.playframework.org/">Play! Framework</a>, something I’ve kept an eye on at arm’s length for quite a few years now.</p>
-
-<p>I’m now into the fourth week of Odersky’s course and, following completion of the first three challenging, but almost perversely absorbing, assignments, today I decided it was time to fire up my first Play2 application. Fortunately, I picked up a little freelance client project last week and it was a bit of a no brainer, given my newly mobilised appetite for all things Scala, to implement it using a technology (Play!) I really knew was overdue an evaluation.</p>
-
-<p>Just a few hours after downloading Play! 2.0.4, I have fallen hopelessly under it’s spell – I’ve been wandering around the house in what resembles a drunken stupor, close to screaming with excitement at what I’ve learned and been able to achieve in just one afternoon. My face aches, my jaw having been locked into a permanent smile. I know this is the future, though I feel a certain degree of sadness as I acknowledge my love affair with JEE, and it’s wonderful layer upon layer of abstraction, to be very nearly over (we need to stay friends, mind – my day job will see to that).</p>
-
-<p>The anticipation. The butterflies. So the journey begins.</p>
 ]]></content>
   </entry>
   

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Twitter Bootstrap | Responsibly Sourced]]></title>
+  <link href="http://DrewEaster.github.io/blog/categories/twitter-bootstrap/atom.xml" rel="self"/>
+  <link href="http://DrewEaster.github.io/"/>
+  <updated>2013-07-14T13:07:55+01:00</updated>
+  <id>http://DrewEaster.github.io/</id>
+  <author>
+    <name><![CDATA[Andrew Easter]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Taking a walk on the wild side]]></title>
+    <link href="http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side/"/>
+    <updated>2013-03-16T12:08:00+00:00</updated>
+    <id>http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side</id>
+    <content type="html"><![CDATA[<p>Having spent nearly 10 years doing my best to avoid wrestling with the client-side web, the necessity to better prepare myself for a new future (think tech startup) means I&rsquo;ve begun some serious dabbling on &ldquo;the wild side&rdquo;.</p>
+
+<p>At first it was just a case of some casual flirting, but that has now extended as far as a proper first date.</p>
+
+<p>I&rsquo;ve long been coming round to the idea that, in order to build a rich application experience in the browser, Java does not have the answer &ndash; for me, the Java component based framework experiments have failed (ThoughtWorks agreed with me in <a href="http://thoughtworks.fileburst.com/assets/technology-radar-october-2012.pdf">October 2012</a>). I feel sad to say this because, whilst I despised JSF right from the start, I kinda liked Wicket and Tapestry. Without wanting to get too heretical, the Java Swing programming model is grounded in some pretty solid coding patterns and, as close as Wicket comes to realising a similar approach on the web, you just can&rsquo;t get away from the fact that the web just ain&rsquo;t really built for that stuff.</p>
+
+<p>So, that date I was referring to was with a cute little beast called <a href="http://angularjs.org/">AngularJS</a>. After initially being slightly sick in my mouth at the thought of a journey beyond statically typed languages, I&rsquo;ve begun to come round to the idea that JavaScript needn&rsquo;t be so bad as long as you play by the <a href="http://www.amazon.co.uk/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">rules</a>, and you couple your exploration with a neat framework like AngularJS. With AngularJS, I&rsquo;m once again playing with a component-ish framework that is not trying to exist on top of an unsuitable protocol &ndash; the rich interactions live in the browser where they feel most at home.</p>
+
+<p>One of the coolest things about AngularJS is that I can even apply some of my most loyal of server-side patterns (I&rsquo;m thinking dependency injection) when hacking client code. And, even more importantly, I still get my server-side fix through building predictable, testable, stateless APIs for the stateful client to consume.</p>
+
+<p>I definitely see this going to a second date, and beyond.</p>
+
+<p>On a final note, I do feel that <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> deserves a special mention here as well. There&rsquo;s no doubt that I suck at CSS, and I truly mean that. But, with Bootstrap, no longer must server-side developers walk naked and exposed in the presentational side of the web. I don&rsquo;t care for CSS &ndash; I don&rsquo;t think I ever will &ndash; but with Bootstrap I&rsquo;ve now got half a chance of making web apps that don&rsquo;t only work good, but look good at the same time.</p>
+]]></content>
+  </entry>
+  
+</feed>

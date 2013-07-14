@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Responsibly Sourced]]></title>
-  <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Scala | Responsibly Sourced]]></title>
+  <link href="http://DrewEaster.github.io/blog/categories/scala/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
   <updated>2013-07-14T12:02:02+01:00</updated>
   <id>http://DrewEaster.github.io/</id>

@@ -130,10 +130,12 @@
 
 <p>The application has three actors:</p>
 
-<pre><code>- [MainSearchActor](https://github.com/drewzilla/realtime-search/blob/master/app/actors/MainSearchActor.scala) supervises and coordinates data flows
-- [ElasticsearchActor](https://github.com/drewzilla/realtime-search/blob/master/app/actors/ElasticSearchActor.scala) interacts with Elasticsearch percolation API
-- [LogEntryProducerActor](https://github.com/drewzilla/realtime-search/blob/master/app/actors/LogEntryProducerActor.scala) generates 'random' log entry data
-</code></pre>
+<ul>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/MainSearchActor.scala">MainSearchActor</a> supervises and coordinates data flows</li>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/ElasticSearchActor.scala">ElasticsearchActor</a> interacts with Elasticsearch percolation API</li>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/LogEntryProducerActor.scala">LogEntryProducerActor</a> generates &lsquo;random&rsquo; log entry data</li>
+</ul>
+
 
 <h3>MainSearchActor</h3>
 
@@ -255,9 +257,11 @@
 
 <p>The key parts of the application UI are:</p>
 
-<pre><code>1. A Play [template](https://github.com/drewzilla/realtime-search/blob/master/app/views/index.scala.html) with AngularJS specific markup
-2. A single AngularJS [controller](https://github.com/drewzilla/realtime-search/blob/master/app/assets/javascripts/controllers.js)
-</code></pre>
+<ol>
+<li>A Play <a href="https://github.com/drewzilla/realtime-search/blob/master/app/views/index.scala.html">template</a> with AngularJS specific markup</li>
+<li>A single AngularJS <a href="https://github.com/drewzilla/realtime-search/blob/master/app/assets/javascripts/controllers.js">controller</a></li>
+</ol>
+
 
 <p>The application makes use of the <a href="http://www.webjars.org/">WebJars</a> project to simplify the introduction of its JS and CSS dependencies (e.g. AngularJS and Twitter Bootstrap).</p>
 

@@ -127,8 +127,8 @@ The User Interface
 
 The key parts of the application UI are:
 
-1. A Play [template](https://github.com/drewzilla/realtime-search/blob/master/app/views/index.scala.html) with AngularJS specific markup
-2. A single AngularJS [controller](https://github.com/drewzilla/realtime-search/blob/master/app/assets/javascripts/controllers.js)
+    1. A Play [template](https://github.com/drewzilla/realtime-search/blob/master/app/views/index.scala.html) with AngularJS specific markup
+    2. A single AngularJS [controller](https://github.com/drewzilla/realtime-search/blob/master/app/assets/javascripts/controllers.js)
 
 The application makes use of the [WebJars](http://www.webjars.org/) project to simplify the introduction of its JS and CSS dependencies (e.g. AngularJS and Twitter Bootstrap).
 

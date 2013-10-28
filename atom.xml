@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-10-27T21:30:21-07:00</updated>
+  <updated>2013-10-27T21:32:45-07:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -51,6 +51,8 @@
 <h2>The Future</h2>
 
 <p>And that&rsquo;s the end of the blog friendly version of my brain dump! I&rsquo;ve been involved in further discussions on the mailing list, including collaborating with Vaughn Vernon on his vision for a simplified model for DDD in Akka. I hope to keep involved in these discussions as I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
+
+<p>I have to add that the Akka Team (including Patrik, Martin, Roland etc.) continue to be such an inspiration. Keep up the good work, guys!</p>
 ]]></content>
   </entry>
   

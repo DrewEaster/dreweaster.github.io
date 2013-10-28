@@ -8,14 +8,14 @@ categories: [Play, Scala]
 Log files as event streams
 --------------------------
 
-Having long been a fan of treating [log files as streams of events](http://12factor.net/logs) (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There's certainly more than one solution to this problem (there is, for example, a nice little plugin here: [https://github.com/briannesbitt/play-accesslog](https://github.com/briannesbitt/play-accesslog)), but I wanted to share something that I 'discovered' in Play that, whilst not clearly documented - I found it by digging through the source - is particularly handy for this use case.
+Having long been a fan of treating [log files as streams of events](http://12factor.net/logs) (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There's certainly more than one solution to this problem (there is, for example, a nice little plugin here: [https://github.com/briannesbitt/play-accesslog](https://github.com/briannesbitt/play-accesslog)), but I wanted to share a little snippet of code - I've used plenty of times in my own applications - utilising the RequestHeader tags feature in Play!.
 
 Just after starting this post, I noticed another great [article](http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/) from [@matthiasnehlsen](https://twitter.com/matthiasnehlsen) about using [Kibana](http://kibana.org/) to store log events generated in Play applications. Kibana is a great tool - backed by the awesome Elasticsearch - and I also highly recommend it. I won't go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :-) Suffice to say, though, the information in my article here would certainly play nicely with Kibana - I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).
 
 RequestHeader tags
 ------------------
 
-So...back to this feature I discovered - `RequestHeader` tags! It turns out that Play associates some very useful 'tags' along with the `RequestHeader` generated for each request. You can get hold of this `Map` of tags by calling `RequestHeader.tags`.
+So...back to this feature - `RequestHeader` tags! It turns out that Play associates some very useful 'tags' along with the `RequestHeader` generated for each request. You can get hold of this `Map` of tags by calling `RequestHeader.tags`.
 
 Given this learning, we can build a Play `EssentialFilter` - that will wrap every request - and log the JSON formatted request information to the Play `Logger`.
 

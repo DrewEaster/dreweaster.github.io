@@ -10,7 +10,7 @@ Introduction
 
 I've been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to translate something I wrote, in one particular thread, into a blog post.
 
-I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit the aforementioned "Holy Trio" of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the "Holy Trio" fits together, so here follows a blog friendly version!
+I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit for the aforementioned "Holy Trio" of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the "Holy Trio" fits together, so here follows a blog friendly version!
 
 Akka and the Holy Trio
 ----------------------

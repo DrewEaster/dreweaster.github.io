@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
 <!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
@@ -117,7 +116,7 @@
 
 <p>So, it seems like the actor model fits very well with DDD, and I&rsquo;m not the first person to think this &ndash; <a href="https://vaughnvernon.co/">Vaughn Vernon</a> is well ahead of the game!</p>
 
-<p>It feels quite natural to me to consider an actor analogous to an aggregate root (in DDD speak). But, rather than just seeing an actor as a mediator sitting in front of a database, you see the actor conceptually as an entity. By incorporating event sourcing, the actor works on the basis of processing a command (representing some action) and outputting one or many events that represent the result of processing that command. At all times the actor encapsulates its current state, which can simply be seen as the result of a series of ordered events applied to it.</p>
+<p>It feels quite natural to me to consider an actor analogous to an aggregate root (in DDD speak). Rather than just seeing an actor as a mediator sitting in front of a database, you see the actor conceptually as an entity. By incorporating event sourcing, the actor works on the basis of processing a command (representing some action) and outputting one or many events that represent the result of processing that command. At all times the actor encapsulates its current state, which can simply be seen as the result of a series of ordered events applied to it.</p>
 
 <p>Initially, it&rsquo;s actually quite helpful to ignore persistence requirements altogether and just rely on the state within the actor &ndash; in this way you don&rsquo;t allow persistence concerns to influence the way you design your domain &ndash; I often find that domain models end up messy because, despite attempts to avoid doing so, persistence concerns end up, in one form or another, leaking into the business logic. Any approach to building a domain layer, that can genuinely remove the need to consider persistence technologies, is an attractive proposition in my mind!</p>
 
@@ -139,7 +138,7 @@
 
 <h2>The Future</h2>
 
-<p>And that&rsquo;s the end of the blog friendly version of my brain dump! I&rsquo;ve been involved in further discussions on the mailing list, including collaborating with Vaughn Vernon on his vision for a simplified model for DDD in Akka. I hope to keep involved in these discussions as I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
+<p>And that&rsquo;s the end of the blog friendly version of my brain dump! I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
 
 <p>I have to add that the Akka Team (including Patrik, Martin, Roland etc.) continue to be such an inspiration. Keep up the good work, guys!</p>
 </div>

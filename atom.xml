@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-10-27T21:32:45-07:00</updated>
+  <updated>2013-10-27T21:46:55-07:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -22,7 +22,7 @@
 
 <p>I&rsquo;ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to translate something I wrote, in one particular thread, into a blog post.</p>
 
-<p>I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit the aforementioned &ldquo;Holy Trio&rdquo; of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the &ldquo;Holy Trio&rdquo; fits together, so here follows a blog friendly version!</p>
+<p>I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit for the aforementioned &ldquo;Holy Trio&rdquo; of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the &ldquo;Holy Trio&rdquo; fits together, so here follows a blog friendly version!</p>
 
 <h2>Akka and the Holy Trio</h2>
 

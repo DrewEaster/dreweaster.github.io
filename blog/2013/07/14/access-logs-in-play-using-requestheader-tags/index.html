@@ -95,7 +95,7 @@
   
 
 
-<time datetime="2013-07-14T13:30:00+01:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
+<time datetime="2013-07-14T13:30:00-07:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -106,13 +106,13 @@
 
 <div class="entry-content"><h2>Log files as event streams</h2>
 
-<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share something that I &lsquo;discovered&rsquo; in Play that, whilst not clearly documented &ndash; I found it by digging through the source &ndash; is particularly handy for this use case.</p>
+<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share a little snippet of code &ndash; I&rsquo;ve used plenty of times in my own applications &ndash; utilising the RequestHeader tags feature in Play!.</p>
 
 <p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
 
 <h2>RequestHeader tags</h2>
 
-<p>So&hellip;back to this feature I discovered &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
+<p>So&hellip;back to this feature &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
 
 <p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
 
@@ -240,7 +240,7 @@
   
 
 
-<time datetime="2013-07-14T13:30:00+01:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
+<time datetime="2013-07-14T13:30:00-07:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
       
 
 <span class="categories">

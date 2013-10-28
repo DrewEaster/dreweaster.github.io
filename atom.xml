@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-07-14T13:39:11+01:00</updated>
+  <updated>2013-10-27T20:40:51-07:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -16,17 +16,17 @@
   <entry>
     <title type="html"><![CDATA[Access logs in Play! using RequestHeader tags]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/"/>
-    <updated>2013-07-14T13:30:00+01:00</updated>
+    <updated>2013-07-14T13:30:00-07:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags</id>
     <content type="html"><![CDATA[<h2>Log files as event streams</h2>
 
-<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share something that I &lsquo;discovered&rsquo; in Play that, whilst not clearly documented &ndash; I found it by digging through the source &ndash; is particularly handy for this use case.</p>
+<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share a little snippet of code &ndash; I&rsquo;ve used plenty of times in my own applications &ndash; utilising the RequestHeader tags feature in Play!.</p>
 
 <p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
 
 <h2>RequestHeader tags</h2>
 
-<p>So&hellip;back to this feature I discovered &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
+<p>So&hellip;back to this feature &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
 
 <p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
 
@@ -138,7 +138,7 @@
   <entry>
     <title type="html"><![CDATA[Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/"/>
-    <updated>2013-07-08T12:25:00+01:00</updated>
+    <updated>2013-07-08T12:25:00-07:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch</id>
     <content type="html"><![CDATA[<h2>Introduction</h2>
 
@@ -344,7 +344,7 @@
   <entry>
     <title type="html"><![CDATA[Taking a walk on the wild side]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side/"/>
-    <updated>2013-03-16T12:08:00+00:00</updated>
+    <updated>2013-03-16T12:08:00-07:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side</id>
     <content type="html"><![CDATA[<p>Having spent nearly 10 years doing my best to avoid wrestling with the client-side web, the necessity to better prepare myself for a new future (think tech startup) means I&rsquo;ve begun some serious dabbling on &ldquo;the wild side&rdquo;.</p>
 
@@ -365,7 +365,7 @@
   <entry>
     <title type="html"><![CDATA[Play2 &amp; Scala – A new beginning]]></title>
     <link href="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/"/>
-    <updated>2012-10-14T11:49:00+01:00</updated>
+    <updated>2012-10-14T11:49:00-07:00</updated>
     <id>http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning</id>
     <content type="html"><![CDATA[<p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
 

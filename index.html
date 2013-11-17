@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Responsibly Sourced</title>
+  <meta name="author" content="Andrew Easter">
+
+  
+  <meta name="description" content="Introduction I&rsquo;ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DrewEaster.github.io">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Responsibly Sourced" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42453804-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Responsibly Sourced</a></h1>
+  
+    <h2>Keep it simple, stupid!</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DrewEaster.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T20:47:00-07:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Introduction</h2>
+
+<p>I&rsquo;ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to translate something I wrote, in one particular thread, into a blog post.</p>
+
+<p>I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit for the aforementioned &ldquo;Holy Trio&rdquo; of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the &ldquo;Holy Trio&rdquo; fits together, so here follows a blog friendly version!</p>
+
+<h2>Akka and the Holy Trio</h2>
+
+<p>So, it seems like the actor model fits very well with DDD, and I&rsquo;m not the first person to think this &ndash; <a href="https://vaughnvernon.co/">Vaughn Vernon</a> is well ahead of the game!</p>
+
+<p>It feels quite natural to me to consider an actor analogous to an aggregate root (in DDD speak). Rather than just seeing an actor as a mediator sitting in front of a database, you see the actor conceptually as an entity. By incorporating event sourcing, the actor works on the basis of processing a command (representing some action) and outputting one or many events that represent the result of processing that command. At all times the actor encapsulates its current state, which can simply be seen as the result of a series of ordered events applied to it.</p>
+
+<p>Initially, it&rsquo;s actually quite helpful to ignore persistence requirements altogether and just rely on the state within the actor &ndash; in this way you don&rsquo;t allow persistence concerns to influence the way you design your domain &ndash; I often find that domain models end up messy because, despite attempts to avoid doing so, persistence concerns end up, in one form or another, leaking into the business logic. Any approach to building a domain layer, that can genuinely remove the need to consider persistence technologies, is an attractive proposition in my mind!</p>
+
+<p>By following an event sourcing approach, persistence becomes no more complex than just persisting the events &ndash; that the actor produces &ndash; in an event store (journal). Given that events represent an immutable history of state changes, the journal can be append only, and that&rsquo;s pretty exciting from a performance perspective. This is something that can quite clearly be bolted on once you&rsquo;ve already put together a working in-memory only version of your domain &ndash; the actors themselves can be completely agnostic to the existence of the persistence mechanism. This is where Akka Persistence comes in &ndash; it works on the following basis:</p>
+
+<ol>
+<li>Actor receives command</li>
+<li>Actor processes command (applies business logic) and produces events that represent results of processing</li>
+<li>Events are persisted to journal</li>
+<li>Events are applied to actor so it can update it&rsquo;s internal state</li>
+</ol>
+
+
+<p>Akka Persistence pretty much deals with everything other than the command handling step, which represents your custom business logic &ndash; Akka is not quite good enough (yet) to do that bit ;&ndash;)</p>
+
+<p>Step 4 is quite important &ndash; it&rsquo;s key that internal state is only applied once you&rsquo;re sure events have been persisted to the journal. Also, by separating this step, it serves the additional purpose of allowing events in the journal to be replayed onto a &ldquo;green&rdquo; instance of the actor such to bring its internal state back up to current. Akka Persistence also has support for &ldquo;snapshots&rdquo; which allow you to take periodic snapshots of current state to be used as a performance optimisation when replaying events.</p>
+
+<p>So, to sum up, the actor model just fits with the &ldquo;Holy Trio&rdquo;. It seems to deal with a majority of the pain points experienced when building a domain layer using more traditional CRUD techniques. It&rsquo;s pretty exciting to me how natural this design feels without any need to consider using an ORM ;&ndash;)</p>
+
+<h2>The Future</h2>
+
+<p>And that&rsquo;s the end of the blog friendly version of my brain dump! I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
+
+<p>I have to add that the Akka Team (including Patrik, Martin, Roland etc.) continue to be such an inspiration. Keep up the good work, guys!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-14T13:30:00-07:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Log files as event streams</h2>
+
+<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share a little snippet of code &ndash; I&rsquo;ve used plenty of times in my own applications &ndash; utilising the RequestHeader tags feature in Play!.</p>
+
+<p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
+
+<h2>RequestHeader tags</h2>
+
+<p>So&hellip;back to this feature &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
+
+<p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">AccessLogFilter</span> <span class="k">extends</span> <span class="nc">EssentialFilter</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">dateTimeFormat</span> <span class="k">=</span> <span class="nc">ISODateTimeFormat</span><span class="o">.</span><span class="n">ordinalDateTimeNoMillis</span><span class="o">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">next</span><span class="k">:</span> <span class="kt">EssentialAction</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EssentialAction</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">rh</span><span class="k">:</span> <span class="kt">RequestHeader</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">startTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="n">logTime</span><span class="o">(</span><span class="n">result</span><span class="k">:</span> <span class="kt">PlainResult</span><span class="o">)</span><span class="k">:</span> <span class="kt">Result</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">val</span> <span class="n">event</span> <span class="k">=</span> <span class="nc">Json</span><span class="o">.</span><span class="n">obj</span><span class="o">(</span>
+</span><span class='line'>          <span class="s">&quot;uri&quot;</span> <span class="o">-&gt;</span> <span class="n">rh</span><span class="o">.</span><span class="n">uri</span><span class="o">,</span>
+</span><span class='line'>          <span class="s">&quot;timestamp&quot;</span> <span class="o">-&gt;</span> <span class="n">dateTimeFormat</span><span class="o">.</span><span class="n">print</span><span class="o">(</span><span class="k">new</span> <span class="nc">DateTime</span><span class="o">),</span>
+</span><span class='line'>          <span class="s">&quot;execution_time&quot;</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="o">),</span>
+</span><span class='line'>          <span class="s">&quot;status&quot;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">status</span><span class="o">,</span>
+</span><span class='line'>          <span class="s">&quot;tags&quot;</span> <span class="o">-&gt;</span> <span class="nc">Json</span><span class="o">.</span><span class="n">toJson</span><span class="o">(</span><span class="n">rh</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">entry</span> <span class="k">=&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">toLowerCase</span> <span class="o">-&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_2</span><span class="o">))</span>
+</span><span class='line'>        <span class="o">)</span>
+</span><span class='line'>        <span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="nc">Json</span><span class="o">.</span><span class="n">stringify</span><span class="o">(</span><span class="n">event</span><span class="o">))</span>
+</span><span class='line'>        <span class="n">result</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">next</span><span class="o">(</span><span class="n">rh</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">plain</span><span class="k">:</span> <span class="kt">PlainResult</span> <span class="o">=&gt;</span> <span class="n">logTime</span><span class="o">(</span><span class="n">plain</span><span class="o">)</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">async</span><span class="k">:</span> <span class="kt">AsyncResult</span> <span class="o">=&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">transform</span><span class="o">(</span><span class="n">logTime</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On top of adding the tags (and some other available request info) to the JSON object, you&rsquo;ll see the execution time is also captured alongside. To enable this filter, we simply create a custom <code>Global.scala</code>, in the default package:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">Global</span> <span class="k">extends</span> <span class="nc">WithFilters</span><span class="o">(</span><span class="nc">AccessLogFilter</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is an example log line generated by this filter (prettified for readability):</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;/search/*&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-194T18:14:27+01:00&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;execution_time&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;tags&quot;</span><span class="p">:{</span>
+</span><span class='line'>      <span class="nt">&quot;route_verb&quot;</span><span class="p">:</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_action_method&quot;</span><span class="p">:</span><span class="s2">&quot;search&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_pattern&quot;</span><span class="p">:</span><span class="s2">&quot;/search/$searchString&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_controller&quot;</span><span class="p">:</span><span class="s2">&quot;controllers.Application&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_comments&quot;</span><span class="p">:</span><span class="s2">&quot;Root action&quot;</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One of the most useful things about capturing the tags is that you get easy access to &lsquo;normalized&rsquo; actions/endpoints. So, it&rsquo;s immediately easy (e.g. in a tool like Kibana) to pick all log events related to a specific action. The URI alone is not good enough because parameterized path variables, or query string parameters, lead to non-unique URI representations for the same logical action bindings.</p>
+
+<p>As the filter wraps every request, you will see log lines generated for static assets too &ndash; something that is most likely too verbose for most use cases. It&rsquo;s not too hard to apply filtering to the URI extension to ignore assets, but I left it out of the example code for the sake of cleanliness.</p>
+
+<p>Keep on logging!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-08T12:25:00-07:00" pubdate data-updated="true">Jul 8<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Introduction</h2>
+
+<p>So, I&rsquo;ve decided to contribute an Activator Template to TypeSafe (will submit soon, promise!). Having recently become more and more involved in Elasticsearch, I saw a great opportunity to put together a neat &ldquo;reactive&rdquo; application combining Play &amp; Akka with the &ldquo;bonsai cool&#8221; <a href="http://www.elasticsearch.org/guide/reference/api/percolate/">percolation</a> feature of Elasticsearch. Then, to put a cherry on top, use AngularJS on the client-side to create a dynamically updating UI.</p>
+
+<p>What I came up with is slightly contrived &ndash; a very basic real-time log entry search tool &ndash; but I think it provides a really nice base for apps that want to integrate this bunch of technologies.</p>
+
+<p><a href="/images/real-time-search.png"><img class="center" src="/images/real-time-search.png" width="600" height="264"></a></p>
+
+<p>All the code for the application is available on Github <a href="https://github.com/drewzilla/realtime-search">here</a>. In this post, I&rsquo;ve attempted to dissect the Activator Template tutorial I&rsquo;ve written and regurgitate it in blog form.</p>
+
+<h3>Play and Akka</h3>
+
+<p>Play and Akka are used to implement the reactive server-side application. The application favours SSE (Server Sent Events) to push updates to the client. The template introduces a number of interesting topics, including Play Iteratees/Enumerators and Akka Actors.</p>
+
+<h3>AngularJS</h3>
+
+<p>AngularJS has been chosen on the client-side to demonstrate how simple it can be to build a dynamic, single page user experience with very little code.</p>
+
+<h3>Elasticsearch</h3>
+
+<p>The &ldquo;bonsai cool&rdquo; percolation feature of Elasticsearch achieves the real-time search aspect of the application. The application starts up an embedded Elasticsearch node, so no need to run your own external instance. Take a look at <a href="https://github.com/drewzilla/realtime-search/blob/master/app/utils/EmbeddedESServer.scala">EmbeddedESServer</a> for the embedded server code. There is a custom <a href="https://github.com/drewzilla/realtime-search/blob/master/app/Global.scala">Global</a> where the embedded server is started and shutdown as part of the application lifecycle.</p>
+
+<h2>The Actors</h2>
+
+<p>The application has three actors:</p>
+
+<ul>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/MainSearchActor.scala">MainSearchActor</a> supervises and coordinates data flows</li>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/ElasticSearchActor.scala">ElasticsearchActor</a> interacts with Elasticsearch percolation API</li>
+<li><a href="https://github.com/drewzilla/realtime-search/blob/master/app/actors/LogEntryProducerActor.scala">LogEntryProducerActor</a> generates &lsquo;random&rsquo; log entry data</li>
+</ul>
+
+
+<h3>MainSearchActor</h3>
+
+<p>This actor&rsquo;s job is to coordinate the reactive parts of the application and supervise the other actors. It is the main dependency of the application&rsquo;s single Play <a href="https://github.com/drewzilla/realtime-search/blob/master/app/controllers/Application.scala">controller</a>.</p>
+
+<p><strong>Starting/stopping a search</strong></p>
+
+<p>The actor responds to a <code>StartSearch</code> message by &lsquo;replying&rsquo; with an <code>Enumerator</code> to the sender. The <code>Enumerator</code> wraps a unicast channel to which log entries are pushed that match the query string sent within the message. Let&rsquo;s take a look at some code:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">startSearching</span><span class="o">(</span><span class="n">startSearch</span><span class="k">:</span> <span class="kt">StartSearch</span><span class="o">)</span> <span class="k">=</span>
+</span><span class='line'>    <span class="nc">Concurrent</span><span class="o">.</span><span class="n">unicast</span><span class="o">[</span><span class="kt">JsValue</span><span class="o">](</span>
+</span><span class='line'>        <span class="n">onStart</span> <span class="k">=</span> <span class="o">(</span><span class="n">c</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">channels</span> <span class="o">+=</span> <span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">)</span>
+</span><span class='line'>            <span class="n">elasticSearchActor</span> <span class="o">!</span> <span class="n">startSearch</span>
+</span><span class='line'>        <span class="o">},</span>
+</span><span class='line'>        <span class="n">onComplete</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">},</span>
+</span><span class='line'>        <span class="n">onError</span> <span class="k">=</span> <span class="o">(</span><span class="n">str</span><span class="o">,</span> <span class="n">in</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">).</span><span class="n">onDoneEnumerating</span><span class="o">(</span>
+</span><span class='line'>        <span class="n">callback</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>            <span class="n">self</span> <span class="o">!</span> <span class="nc">StopSearch</span><span class="o">(</span><span class="n">startSearch</span><span class="o">.</span><span class="n">id</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The Play Iteratees library has the very handy <code>Concurrent</code> utilities. In this case, <code>Concurrent.unicast</code> is called to create an <code>Enumerator</code> that encloses a <code>Concurrent.Channel</code>. When the channel starts (<code>onStart</code>), it is stored in a map local to the actor (using UUID as key) and the <code>StartSearch</code> message is forwarded onto the <code>ElasticSearchActor</code> where the query will be percolated in Elasticsearch. It&rsquo;s worth noting that this code is not production ready &ndash; it ought to be a transactional operation, i.e. we should only store the channel once we know Elasticsearch has successfully percolated the query. You will notice that a <code>StopSearch</code> message is sent to <code>self</code> such that the channel is removed from the local map, and the percolated query is deleted, when the channel is no longer useful (i.e. is closed by the client, or an error occurs).</p>
+
+<p><strong>Broadcasting matching results</strong></p>
+
+<p>The actor will receive a <code>SearchMatch</code> message when a log entry has matched a percolated query.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">broadcastMatch</span><span class="o">(</span><span class="n">searchMatch</span><span class="k">:</span> <span class="kt">SearchMatch</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'>    <span class="n">searchMatch</span><span class="o">.</span><span class="n">matchingChannelIds</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
+</span><span class='line'>        <span class="n">channels</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="k">_</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>            <span class="k">_</span> <span class="n">push</span> <span class="n">searchMatch</span><span class="o">.</span><span class="n">logEntry</span><span class="o">.</span><span class="n">data</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On receipt of the message, each matching id is iterated over and the corresponding channel is retrieved from the local map. The log entry is then pushed to the channel, and thus onto the client.</p>
+
+<p><strong>Scheduling log entry creation</strong></p>
+
+<p>The actor uses the Akka scheduler to send a <code>Tick</code> to the <code>LogEntryProducerActor</code> every second &ndash; in the real world, this would obviously be unnecessary, as genuine log entries would be fed into the application in some other way. The <code>Tick</code> is sent to <code>self</code> before being forwarded on to the <code>LogEntryProducerActor</code>.</p>
+
+<h3>ElasticsearchActor</h3>
+
+<p>This actor has responsibility for both registering queries in Elasticsearch and percolating log entry documents against those queries. Rather than utilise the Elasticsearch Java Client, the code, instead, crafts the Elasticsearch API calls manually, demonstrating the use of the asynchronous Play WS API to execute them. For simplicity, the calls are hard coded to talk to Elasticsearch on localhost:9200 (where the embedded server will be listening).</p>
+
+<p>The code is fairly self explanatory within this actor. Do note that there is a lack of error handling on the API calls thus making this actor unsuitable for production use in its current form. It is recommended you read the Elasticsearch <a href="http://www.elasticsearch.org/guide/reference/api/percolate/">documentation on percolation</a> to learn more about this powerful feature.</p>
+
+<p>There&rsquo;s one little important gotcha this code has avoided &ndash; closing over the <code>sender</code> ref in an asynchronous callback block. The <code>sender</code> ref is part of the shared mutable state of the actor and so, if the actor were to reply to the sender in the percolate callback, a race condition would be encountered if another thread had modified the actor&rsquo;s state before the percolation call to Elasticsearch had completed. This race condition has been avoided by ensuring to &lsquo;freeze&rsquo; the <code>sender</code> ref, by sending it to a private function:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">private</span> <span class="k">def</span> <span class="n">percolate</span><span class="o">(</span><span class="n">logJson</span><span class="k">:</span> <span class="kt">JsValue</span><span class="o">,</span> <span class="n">requestor</span><span class="k">:</span> <span class="kt">ActorRef</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>and close over the parameter instead.</p>
+
+<h3>LogEntryProducerActor</h3>
+
+<p>I won&rsquo;t go into the detail of this actor. Suffice to say, its job is to generate a random, JSON formatted log event whenever it receives a <code>Tick</code> message. In reality, a genuine source of log events would replace this actor.</p>
+
+<h2>The Play Controller</h2>
+
+<p>As most of the server-side logic exists within the actors, the single Play controller is very simple. The most interesting aspect of the controller is the action that opens an event stream connected with the client:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">def</span> <span class="n">search</span><span class="o">(</span><span class="n">searchString</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Action</span> <span class="o">{</span>
+</span><span class='line'>    <span class="nc">Async</span> <span class="o">{</span>
+</span><span class='line'>        <span class="o">(</span><span class="n">searchActor</span> <span class="o">?</span> <span class="nc">StartSearch</span><span class="o">(</span><span class="n">searchString</span> <span class="k">=</span> <span class="n">searchString</span><span class="o">)).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>            <span class="k">case</span> <span class="nc">SearchFeed</span><span class="o">(</span><span class="n">out</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Ok</span><span class="o">.</span><span class="n">stream</span><span class="o">(</span><span class="n">out</span> <span class="o">&amp;&gt;</span> <span class="nc">EventSource</span><span class="o">()).</span><span class="n">as</span><span class="o">(</span><span class="s">&quot;text/event-stream&quot;</span><span class="o">)</span>
+</span><span class='line'>        <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The most important thing to note is the use of the Akka &lsquo;ask&rsquo; pattern of message exchange (notice the use of &lsquo;?&rsquo; instead of &lsquo;!&rsquo;). This differs from the more typical fire-and-forget approach in that we&rsquo;re able to asynchronously pick up a reply from the recipient actor. In this scenario, a <code>StartSearch</code> message is sent to the <code>MainSearchActor</code> which replies with an <code>Enumerator</code> used to stream search results to the client. Given the use of the &lsquo;ask&rsquo; pattern, we wrap the action logic in an <code>Async</code> block &ndash; so not to hold up other requests &ndash; rather than blocking until the <code>Future</code> yields a result.</p>
+
+<h2>The User Interface</h2>
+
+<p>The key parts of the application UI are:</p>
+
+<ol>
+<li>A Play <a href="https://github.com/drewzilla/realtime-search/blob/master/app/views/index.scala.html">template</a> with AngularJS specific markup</li>
+<li>A single AngularJS <a href="https://github.com/drewzilla/realtime-search/blob/master/app/assets/javascripts/controllers.js">controller</a></li>
+</ol>
+
+
+<p>The application makes use of the <a href="http://www.webjars.org/">WebJars</a> project to simplify the introduction of its JS and CSS dependencies (e.g. AngularJS and Twitter Bootstrap).</p>
+
+<h3>UI Template</h3>
+
+<p>Firstly, the opening <code>&lt;div&gt;</code> is linked to the controller <code>SearchCtrl</code> that subsequently enables the automagical databinding power of AngularJS. A simple search form captures an Apache Lucene formatted query string. A search can be started by clicking on the &lsquo;Search&rsquo; button which invokes the <code>startSearching()</code> function defined in the controller. Finally, you can see the use of AngularJS two-way databinding to render matching search results contained within the view model (only displays the latest 10 matches):</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="o">&lt;</span><span class="n">tr</span> <span class="n">ng</span><span class="o">-</span><span class="n">repeat</span><span class="o">=</span><span class="s">&quot;searchResult in searchResults | limitTo:10&quot;</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>The AngularJS Controller</h3>
+
+<p>The AngularJS controller is fairly straightforward. The key part is handling a new search:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="nc">$scope</span><span class="o">.</span><span class="n">startSearching</span> <span class="k">=</span> <span class="n">function</span> <span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">stopSearching</span><span class="o">()</span>
+</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchResults</span> <span class="k">=</span> <span class="o">[];</span>
+</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EventSource</span><span class="o">(</span><span class="s">&quot;/search/&quot;</span> <span class="o">+</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">searchString</span><span class="o">);</span>
+</span><span class='line'>    <span class="nc">$scope</span><span class="o">.</span><span class="n">searchFeed</span><span class="o">.</span><span class="n">addEventListener</span><span class="o">(</span><span class="s">&quot;message&quot;</span><span class="o">,</span> <span class="nc">$scope</span><span class="o">.</span><span class="n">addSearchResult</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+</span><span class='line'><span class="o">};</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Firstly, an existing search is stopped (if running) and the results model cleared (will automagically clear any existing results from the HTML markup). Secondly, an event stream connection is made to the server and an event listener is added that pushes matching search results into the model as they arrive from the server.</p>
+
+<p>As we are updating the model (in the <code>addSearchResult</code> function) outside of it&rsquo;s knowledge, we&rsquo;ve had to explicitly tell Angular that we&rsquo;ve pushed a new result to the model by wrapping the code in a function passed to <code>$scope.apply</code>. See the Angular docs for the <a href="http://docs.angularjs.org/api/ng.$rootScope.Scope">$scope</a> object for more information.</p>
+
+<h2>Using the application</h2>
+
+<p>Fire up the application using <code>play run</code> and point your browser (not IE &ndash; it doesn&rsquo;t support SSE. Doh!) to <a href="http://localhost:9000">http://localhost:9000</a>. Using the application is as simple as entering an Apache Lucene formatted query. Please read the Lucene <a href="http://lucene.apache.org/core/4_3_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description">query parser syntax documentation</a> for more information on how to construct Lucene query strings. A simple example would be to enter &ldquo;GET&rdquo; as your query string, thus matching all log entries for GET requests.</p>
+
+<p>Enjoy!</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/">Taking a Walk on the Wild Side</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-16T12:08:00-07:00" pubdate data-updated="true">Mar 16<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Having spent nearly 10 years doing my best to avoid wrestling with the client-side web, the necessity to better prepare myself for a new future (think tech startup) means I&rsquo;ve begun some serious dabbling on &ldquo;the wild side&rdquo;.</p>
+
+<p>At first it was just a case of some casual flirting, but that has now extended as far as a proper first date.</p>
+
+<p>I&rsquo;ve long been coming round to the idea that, in order to build a rich application experience in the browser, Java does not have the answer &ndash; for me, the Java component based framework experiments have failed (ThoughtWorks agreed with me in <a href="http://thoughtworks.fileburst.com/assets/technology-radar-october-2012.pdf">October 2012</a>). I feel sad to say this because, whilst I despised JSF right from the start, I kinda liked Wicket and Tapestry. Without wanting to get too heretical, the Java Swing programming model is grounded in some pretty solid coding patterns and, as close as Wicket comes to realising a similar approach on the web, you just can&rsquo;t get away from the fact that the web just ain&rsquo;t really built for that stuff.</p>
+
+<p>So, that date I was referring to was with a cute little beast called <a href="http://angularjs.org/">AngularJS</a>. After initially being slightly sick in my mouth at the thought of a journey beyond statically typed languages, I&rsquo;ve begun to come round to the idea that JavaScript needn&rsquo;t be so bad as long as you play by the <a href="http://www.amazon.co.uk/JavaScript-Good-Parts-Douglas-Crockford/dp/0596517742">rules</a>, and you couple your exploration with a neat framework like AngularJS. With AngularJS, I&rsquo;m once again playing with a component-ish framework that is not trying to exist on top of an unsuitable protocol &ndash; the rich interactions live in the browser where they feel most at home.</p>
+
+<p>One of the coolest things about AngularJS is that I can even apply some of my most loyal of server-side patterns (I&rsquo;m thinking dependency injection) when hacking client code. And, even more importantly, I still get my server-side fix through building predictable, testable, stateless APIs for the stateful client to consume.</p>
+
+<p>I definitely see this going to a second date, and beyond.</p>
+
+<p>On a final note, I do feel that <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a> deserves a special mention here as well. There&rsquo;s no doubt that I suck at CSS, and I truly mean that. But, with Bootstrap, no longer must server-side developers walk naked and exposed in the presentational side of the web. I don&rsquo;t care for CSS &ndash; I don&rsquo;t think I ever will &ndash; but with Bootstrap I&rsquo;ve now got half a chance of making web apps that don&rsquo;t only work good, but look good at the same time.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-14T11:49:00-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
+
+<p>The murmurings for this new chapter began a few weeks ago when I enrolled on Martin Odersky’s “Functional Programming Principles in Scala” course – a fantastic FREE online course that runs for seven weeks, supported by <a href="http://www.epfl.ch/">EPFL</a> in Switzerland. For sure, I’ve been well aware of the rise of Scala within the industry but had never gotten round to really indulging in this exciting language (except, maybe, for getting through a few chapters of <a href="http://www.artima.com/shop/programming_in_scala_2ed/">Programming in Scala</a> on my Kindle). The same goes for the <a href="http://www.playframework.org/">Play! Framework</a>, something I’ve kept an eye on at arm’s length for quite a few years now.</p>
+
+<p>I’m now into the fourth week of Odersky’s course and, following completion of the first three challenging, but almost perversely absorbing, assignments, today I decided it was time to fire up my first Play2 application. Fortunately, I picked up a little freelance client project last week and it was a bit of a no brainer, given my newly mobilised appetite for all things Scala, to implement it using a technology (Play!) I really knew was overdue an evaluation.</p>
+
+<p>Just a few hours after downloading Play! 2.0.4, I have fallen hopelessly under it’s spell – I’ve been wandering around the house in what resembles a drunken stupor, close to screaming with excitement at what I’ve learned and been able to achieve in just one afternoon. My face aches, my jaw having been locked into a permanent smile. I know this is the future, though I feel a certain degree of sadness as I acknowledge my love affair with JEE, and it’s wonderful layer upon layer of abstraction, to be very nearly over (we need to stay friends, mind – my day job will see to that).</p>
+
+<p>The anticipation. The butterflies. So the journey begins.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/3826ebb004235b010639bd0b347707fc?s=300" alt="Gravatar of Andrew Easter " title="Gravatar of Andrew Easter" />
+	</span>
+</section>
+<section>
+    <h1>About Me</h1>
+    <p>Hi, my name is Andrew and I&#8217;m a software engineer. It&#8217;s pretty cool.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/">Taking a Walk on the Wild Side</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline" href="https://twitter.com/DrewEaster" data-widget-id="354179588873658368">Tweets by @DrewEaster</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Andrew Easter -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'responsiblysourced';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

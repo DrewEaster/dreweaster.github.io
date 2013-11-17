@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Akka, DDD, CQRS, Event Sourcing and Me - Responsibly Sourced</title>
+  <meta name="author" content="Andrew Easter">
+
+  
+  <meta name="description" content="Introduction I&rsquo;ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Responsibly Sourced" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42453804-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Responsibly Sourced</a></h1>
+  
+    <h2>Keep it simple, stupid!</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DrewEaster.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Akka, DDD, CQRS, Event Sourcing and Me</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T20:47:00-07:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Introduction</h2>
+
+<p>I&rsquo;ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to translate something I wrote, in one particular thread, into a blog post.</p>
+
+<p>I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit for the aforementioned &ldquo;Holy Trio&rdquo; of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the &ldquo;Holy Trio&rdquo; fits together, so here follows a blog friendly version!</p>
+
+<h2>Akka and the Holy Trio</h2>
+
+<p>So, it seems like the actor model fits very well with DDD, and I&rsquo;m not the first person to think this &ndash; <a href="https://vaughnvernon.co/">Vaughn Vernon</a> is well ahead of the game!</p>
+
+<p>It feels quite natural to me to consider an actor analogous to an aggregate root (in DDD speak). Rather than just seeing an actor as a mediator sitting in front of a database, you see the actor conceptually as an entity. By incorporating event sourcing, the actor works on the basis of processing a command (representing some action) and outputting one or many events that represent the result of processing that command. At all times the actor encapsulates its current state, which can simply be seen as the result of a series of ordered events applied to it.</p>
+
+<p>Initially, it&rsquo;s actually quite helpful to ignore persistence requirements altogether and just rely on the state within the actor &ndash; in this way you don&rsquo;t allow persistence concerns to influence the way you design your domain &ndash; I often find that domain models end up messy because, despite attempts to avoid doing so, persistence concerns end up, in one form or another, leaking into the business logic. Any approach to building a domain layer, that can genuinely remove the need to consider persistence technologies, is an attractive proposition in my mind!</p>
+
+<p>By following an event sourcing approach, persistence becomes no more complex than just persisting the events &ndash; that the actor produces &ndash; in an event store (journal). Given that events represent an immutable history of state changes, the journal can be append only, and that&rsquo;s pretty exciting from a performance perspective. This is something that can quite clearly be bolted on once you&rsquo;ve already put together a working in-memory only version of your domain &ndash; the actors themselves can be completely agnostic to the existence of the persistence mechanism. This is where Akka Persistence comes in &ndash; it works on the following basis:</p>
+
+<ol>
+<li>Actor receives command</li>
+<li>Actor processes command (applies business logic) and produces events that represent results of processing</li>
+<li>Events are persisted to journal</li>
+<li>Events are applied to actor so it can update it&rsquo;s internal state</li>
+</ol>
+
+
+<p>Akka Persistence pretty much deals with everything other than the command handling step, which represents your custom business logic &ndash; Akka is not quite good enough (yet) to do that bit ;&ndash;)</p>
+
+<p>Step 4 is quite important &ndash; it&rsquo;s key that internal state is only applied once you&rsquo;re sure events have been persisted to the journal. Also, by separating this step, it serves the additional purpose of allowing events in the journal to be replayed onto a &ldquo;green&rdquo; instance of the actor such to bring its internal state back up to current. Akka Persistence also has support for &ldquo;snapshots&rdquo; which allow you to take periodic snapshots of current state to be used as a performance optimisation when replaying events.</p>
+
+<p>So, to sum up, the actor model just fits with the &ldquo;Holy Trio&rdquo;. It seems to deal with a majority of the pain points experienced when building a domain layer using more traditional CRUD techniques. It&rsquo;s pretty exciting to me how natural this design feels without any need to consider using an ORM ;&ndash;)</p>
+
+<h2>The Future</h2>
+
+<p>And that&rsquo;s the end of the blog friendly version of my brain dump! I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
+
+<p>I have to add that the Akka Team (including Patrik, Martin, Roland etc.) continue to be such an inspiration. Keep up the good work, guys!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Andrew Easter</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-27T20:47:00-07:00" pubdate data-updated="true">Oct 27<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/akka/'>Akka</a>, <a class='category' href='/blog/categories/cqrs/'>CQRS</a>, <a class='category' href='/blog/categories/ddd/'>DDD</a>, <a class='category' href='/blog/categories/eventsourcing/'>Eventsourcing</a>, <a class='category' href='/blog/categories/scala/'>Scala</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/" data-via="DrewEaster" data-counturl="http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/" title="Previous Post: Access logs in Play! using RequestHeader tags">&laquo; Access logs in Play! using RequestHeader tags</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/3826ebb004235b010639bd0b347707fc?s=300" alt="Gravatar of Andrew Easter " title="Gravatar of Andrew Easter" />
+	</span>
+</section>
+<section>
+    <h1>About Me</h1>
+    <p>Hi, my name is Andrew and I'm a software engineer. It's pretty cool.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/">Taking a Walk on the Wild Side</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline" href="https://twitter.com/DrewEaster" data-widget-id="354179588873658368">Tweets by @DrewEaster</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Andrew Easter -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'responsiblysourced';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/';
+        var disqus_url = 'http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

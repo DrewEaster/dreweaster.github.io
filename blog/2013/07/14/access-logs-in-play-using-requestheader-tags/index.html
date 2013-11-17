@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Access logs in Play! using RequestHeader tags - Responsibly Sourced</title>
+  <meta name="author" content="Andrew Easter">
+
+  
+  <meta name="description" content="Log files as event streams Having long been a fan of treating log files as streams of events (JSON formatted), I thought it would be useful to share &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Responsibly Sourced" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42453804-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Responsibly Sourced</a></h1>
+  
+    <h2>Keep it simple, stupid!</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:DrewEaster.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Access Logs in Play! Using RequestHeader Tags</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-14T13:30:00-07:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Log files as event streams</h2>
+
+<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share a little snippet of code &ndash; I&rsquo;ve used plenty of times in my own applications &ndash; utilising the RequestHeader tags feature in Play!.</p>
+
+<p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
+
+<h2>RequestHeader tags</h2>
+
+<p>So&hellip;back to this feature &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
+
+<p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">AccessLogFilter</span> <span class="k">extends</span> <span class="nc">EssentialFilter</span> <span class="o">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">val</span> <span class="n">dateTimeFormat</span> <span class="k">=</span> <span class="nc">ISODateTimeFormat</span><span class="o">.</span><span class="n">ordinalDateTimeNoMillis</span><span class="o">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">next</span><span class="k">:</span> <span class="kt">EssentialAction</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EssentialAction</span> <span class="o">{</span>
+</span><span class='line'>    <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">rh</span><span class="k">:</span> <span class="kt">RequestHeader</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+</span><span class='line'>      <span class="k">val</span> <span class="n">startTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">def</span> <span class="n">logTime</span><span class="o">(</span><span class="n">result</span><span class="k">:</span> <span class="kt">PlainResult</span><span class="o">)</span><span class="k">:</span> <span class="kt">Result</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">val</span> <span class="n">event</span> <span class="k">=</span> <span class="nc">Json</span><span class="o">.</span><span class="n">obj</span><span class="o">(</span>
+</span><span class='line'>          <span class="s">&quot;uri&quot;</span> <span class="o">-&gt;</span> <span class="n">rh</span><span class="o">.</span><span class="n">uri</span><span class="o">,</span>
+</span><span class='line'>          <span class="s">&quot;timestamp&quot;</span> <span class="o">-&gt;</span> <span class="n">dateTimeFormat</span><span class="o">.</span><span class="n">print</span><span class="o">(</span><span class="k">new</span> <span class="nc">DateTime</span><span class="o">),</span>
+</span><span class='line'>          <span class="s">&quot;execution_time&quot;</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="o">),</span>
+</span><span class='line'>          <span class="s">&quot;status&quot;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">status</span><span class="o">,</span>
+</span><span class='line'>          <span class="s">&quot;tags&quot;</span> <span class="o">-&gt;</span> <span class="nc">Json</span><span class="o">.</span><span class="n">toJson</span><span class="o">(</span><span class="n">rh</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">entry</span> <span class="k">=&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">toLowerCase</span> <span class="o">-&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_2</span><span class="o">))</span>
+</span><span class='line'>        <span class="o">)</span>
+</span><span class='line'>        <span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="nc">Json</span><span class="o">.</span><span class="n">stringify</span><span class="o">(</span><span class="n">event</span><span class="o">))</span>
+</span><span class='line'>        <span class="n">result</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">next</span><span class="o">(</span><span class="n">rh</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">plain</span><span class="k">:</span> <span class="kt">PlainResult</span> <span class="o">=&gt;</span> <span class="n">logTime</span><span class="o">(</span><span class="n">plain</span><span class="o">)</span>
+</span><span class='line'>        <span class="k">case</span> <span class="n">async</span><span class="k">:</span> <span class="kt">AsyncResult</span> <span class="o">=&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">transform</span><span class="o">(</span><span class="n">logTime</span><span class="o">)</span>
+</span><span class='line'>      <span class="o">}</span>
+</span><span class='line'>    <span class="o">}</span>
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On top of adding the tags (and some other available request info) to the JSON object, you&rsquo;ll see the execution time is also captured alongside. To enable this filter, we simply create a custom <code>Global.scala</code>, in the default package:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">Global</span> <span class="k">extends</span> <span class="nc">WithFilters</span><span class="o">(</span><span class="nc">AccessLogFilter</span><span class="o">)</span> <span class="o">{</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here is an example log line generated by this filter (prettified for readability):</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
+</span><span class='line'>   <span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;/search/*&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-194T18:14:27+01:00&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;execution_time&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span>
+</span><span class='line'>   <span class="nt">&quot;tags&quot;</span><span class="p">:{</span>
+</span><span class='line'>      <span class="nt">&quot;route_verb&quot;</span><span class="p">:</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_action_method&quot;</span><span class="p">:</span><span class="s2">&quot;search&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_pattern&quot;</span><span class="p">:</span><span class="s2">&quot;/search/$searchString&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_controller&quot;</span><span class="p">:</span><span class="s2">&quot;controllers.Application&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="nt">&quot;route_comments&quot;</span><span class="p">:</span><span class="s2">&quot;Root action&quot;</span>
+</span><span class='line'>   <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One of the most useful things about capturing the tags is that you get easy access to &lsquo;normalized&rsquo; actions/endpoints. So, it&rsquo;s immediately easy (e.g. in a tool like Kibana) to pick all log events related to a specific action. The URI alone is not good enough because parameterized path variables, or query string parameters, lead to non-unique URI representations for the same logical action bindings.</p>
+
+<p>As the filter wraps every request, you will see log lines generated for static assets too &ndash; something that is most likely too verbose for most use cases. It&rsquo;s not too hard to apply filtering to the URI extension to ignore assets, but I left it out of the example code for the sake of cleanliness.</p>
+
+<p>Keep on logging!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Andrew Easter</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-14T13:30:00-07:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/play/'>Play</a>, <a class='category' href='/blog/categories/scala/'>Scala</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/" data-via="DrewEaster" data-counturl="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/" title="Previous Post: Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch">&laquo; Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/" title="Next Post: Akka, DDD, CQRS, Event Sourcing and Me">Akka, DDD, CQRS, Event Sourcing and Me &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/3826ebb004235b010639bd0b347707fc?s=300" alt="Gravatar of Andrew Easter " title="Gravatar of Andrew Easter" />
+	</span>
+</section>
+<section>
+    <h1>About Me</h1>
+    <p>Hi, my name is Andrew and I'm a software engineer. It's pretty cool.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/">Taking a Walk on the Wild Side</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline" href="https://twitter.com/DrewEaster" data-widget-id="354179588873658368">Tweets by @DrewEaster</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Andrew Easter -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'responsiblysourced';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/';
+        var disqus_url = 'http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

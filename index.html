@@ -9,7 +9,7 @@
   <meta name="author" content="Andrew Easter">
 
   
-  <meta name="description" content="Introduction I’ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to &hellip;">
+  <meta name="description" content="Complexity. As software engineers, it&rsquo;s pretty hard to make it beyond lunch without someone mentioning it. But, what is it exactly? Most of us &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,64 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/">The Fallacy of the Omniscient Domain Model</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-17T17:20:00-08:00" pubdate data-updated="true">Nov 17<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Complexity. As software engineers, it&rsquo;s pretty hard to make it beyond lunch without someone mentioning it. But, what is it exactly? Most of us probably think we sussed this out a long time ago &ndash; hell, we&rsquo;re probably preaching the KISS and DRY principles on a daily basis. However, complexity in software is a multi-faceted beast and, with that in mind, taking the time to reflect on your own view of complexity, may reveal a bunch of defective preconceptions.</p>
+
+<p>One of these preconceptions, one which I&rsquo;ve failed to question effectively myself in the past, is that a &lsquo;simple&rsquo; domain model is one that can encompass the entire domain of an enterprise. The other preconception is that &lsquo;simple&rsquo; architecture means few moving parts.</p>
+
+<p>Let&rsquo;s address each one individually.</p>
+
+<p>Imagine a completely DRY, one-size-fits-all domain model that manages to perfectly model the domain of an entire enterprise. This model is infinitely malleable and able to accommodate future changes without adversely affecting existing code dependant on it. Are you struggling to imagine this? I hope so, because I don&rsquo;t think it&rsquo;s possible in anything other than the most basic of business domains. Regardless, this a very common approach and, instead of being simple, it adds an alarming amount of overall complexity. Ultimately, the intertwining of vaguely related entities makes it impossible to make changes in one place without having to untangle deep dependencies elsewhere.</p>
+
+<p>If, instead, you apply some of the core principles of Domain Driven Design (Domains, Subdomains, Bounded Contexts) to any enterprise, it&rsquo;s natural to materialise multiple models that exist within the different subdomains and contexts that make up the wider domain. This approach, which actually reflects the structure of the real business, reduces overall complexity &ndash; dependencies are untangled by design, making changes more achievable in isolation.</p>
+
+<p>One important thing to note here &ndash; you&rsquo;re not necessarily violating the DRY principle if an entity appears in multiple contexts. Maybe you&rsquo;ve just failed to successfully tweak the Ubiquitous Language for each context, such that you&rsquo;re recognising that entity to mean different things in those different contexts.</p>
+
+<p>So, now onto our second preconception &ndash; does simple architecture mean few moving parts? My previous argument may seem overly convenient given it implicitly provides support to my next case &ndash; it&rsquo;s most likely true that the introduction of multiple bounded contexts and/or subdomains will lead to more moving parts. But does that actually equate to complexity?</p>
+
+<p>We&rsquo;ve all seen over-engineered software that throws in a message queue here, another message queue over there, neither appearing to offer any discernible value. I&rsquo;m certainly not advocating that! But these over imaginative solutions shouldn&rsquo;t be confused with DDD influenced design decisions to separate contexts and integrate them effectively where necessary.</p>
+
+<p>Applying the KISS principle to architecture doesn&rsquo;t necessarily mean a system with fewer moving parts. A simple system is one that is highly adaptable and reactive to business changes &ndash; thus, the number of moving parts alone can&rsquo;t be considered a good measure of complexity.</p>
+
+<p>I hope the arguments I&rsquo;ve made in this article help to address some common misconceptions. I do believe the concept of a single, all-knowing domain model is a fallacy. Feel confident to apply DDD principles and don&rsquo;t fear the additional moving parts you might adopt in the process.</p>
+
+<p>Complexity is not always what it seems.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -653,6 +711,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/">The Fallacy of the Omniscient Domain Model</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
       </li>
     
@@ -666,10 +728,6 @@
     
       <li class="post">
         <a href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/">Taking a Walk on the Wild Side</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a>
       </li>
     
   </ul>

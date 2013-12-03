@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-03T15:15:24-08:00</updated>
+  <updated>2013-12-03T15:51:29-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -36,8 +36,7 @@
 
 <h3>Detection</h3>
 
-<p>It&rsquo;s my belief that the Wikipedia definition is essentially referring to the mechanism that sits between a producer and consumer (the infrastructure piece) &ndash; the logic that ensures events are passed to interested consumers.
-§</p>
+<p>It&rsquo;s my belief that the Wikipedia definition is essentially referring to the mechanism that sits between a producer and consumer (the infrastructure piece) &ndash; the logic that ensures events are passed to interested consumers.</p>
 
 <h3>Consumption</h3>
 
@@ -45,11 +44,11 @@
 
 <h3>Reaction</h3>
 
-<p>Reaction is the fun part where a consumer actually performs some action in response to the event that it has consumed. For example, imagine you register a user on your website and you want to send them a welcome email. Rather than bundling the responsibility for sending email within your domain model, just create a consumer to listen into a UserRegisteredEvent and send an email from there. This nicely decouples the email delivery phase and, also, allows it to be done asynchronously &ndash; you probably don&rsquo;t need, or want, email delivery to be a synchronous action. Also, imagine you have further requirements relating to post registration behaviour &ndash; your domain model would soon become unwieldy with all that extra responsibility. Not one to want to violate the Single Responsibility Principle (SRP), you sensibly use event programming to separate all those actions into separate consumers, allowing each behaviour to be tested in isolation, and retain simplicity in your domain model.</p>
+<p>Reaction is the fun part where a consumer actually performs some action in response to the event that it has consumed. For example, imagine you register a user on your website and you want to send them a welcome email. Rather than bundling the responsibility for sending email within your domain model, just create a consumer to listen into a UserRegisteredEvent and send an email from there. This nicely decouples the email delivery phase and, also, allows it to be done asynchronously &ndash; you probably don&rsquo;t need, or want, email delivery to be a synchronous action. Also, imagine you have further requirements relating to post registration behaviour &ndash; your domain model would soon become unwieldy with all that extra responsibility. Not one to want to violate the Single Responsibility Principle (SRP), you sensibly use event-driven programming to separate all those actions into separate consumers, allowing each behaviour to be tested in isolation, and retain simplicity in your domain model.</p>
 
 <h2>Events everywhere</h2>
 
-<p>As previously alluded to, it&rsquo;s far from unusual to see fragments of event programming in many applications. However, it&rsquo;s another step entirely to see event programming adopted in such a way that it becomes an endemic architectural pattern &ndash; that is, where an entire platform uses events to underpin all its moving parts. To be successful with EDA, it needs to become a fundamental mindset that drives all design decisions, rather than just a pattern that used in some isolated parts of a wider system.</p>
+<p>As previously alluded to, it&rsquo;s far from unusual to see fragments of event-driven programming in many applications. However, it&rsquo;s another step entirely to see event-driven programming adopted in such a way that it becomes an endemic architectural pattern &ndash; that is, where an entire platform uses events to underpin all its moving parts. To be successful with EDA, it needs to become a fundamental mindset that drives all design decisions, rather than just a pattern that used in some isolated parts of a wider system.</p>
 
 <p>I want to evaluate a series of application/platform features that, whilst might sit outside of core business workflows, fit really nicely with EDA. This should help to realise why EDA can be a very fruitful path to follow.</p>
 
@@ -69,11 +68,11 @@
 
 <h3>Log file analysis</h3>
 
-<p>There is possibly some crossover here with monitoring, and even Big Data, but I think it deserves its own special mention. If you imagine logs as comprehensive streams of events, if you&rsquo;ve followed an EDA style, you can pretty much get log analysis for free. Just suck your logs into some analysis tools (e.g. <a href="http://logstash.net/">Logstash</a> and <a href="http://www.elasticsearch.org/overview/kibana/">Kibana</a>), and you&rsquo;re pretty much good to go. Just remember that it&rsquo;s perfectly reasonable to use events to represent errors too (which could contain any relevant stack trace).</p>
+<p>There is possibly some crossover here with monitoring, and even Big Data, but I think it deserves its own special mention. If you imagine logs as comprehensive streams of events, assuming you&rsquo;ve followed an EDA style, you can pretty much get log analysis for free. Just suck your logs into some analysis tools (e.g. <a href="http://logstash.net/">Logstash</a> and <a href="http://www.elasticsearch.org/overview/kibana/">Kibana</a>), and you&rsquo;re pretty much good to go. Just remember that it&rsquo;s perfectly reasonable to use events to represent errors too (which could contain any relevant stack trace).</p>
 
 <h3>Test-driven Development (TDD)</h3>
 
-<p>Okay, so TDD is not an application feature, it&rsquo;s part of the engineering process. However, if our architecture decisions can help to improve our quality process, then that can&rsquo;t be a bad thing. Event driven programming encourages a code level design approach that follows the <a href="http://pragprog.com/articles/tell-dont-ask">Tell, Don&rsquo;t Ask</a> pattern. You tell an object to do something, which leads to an event, or events, being published. So, what&rsquo;s this got to do with TDD? In my experience, it&rsquo;s much easier to reason about your code, and define more coherent specifications, if your testing style mimics &ldquo;given this input (command), I expect this event, or events, to be produced&rdquo;. A test first approach is very compatible with this style, and makes you think in a much more behavioural (think BDD) way.</p>
+<p>Okay, so TDD is not an application feature, it&rsquo;s part of the engineering process. However, if our architecture decisions can help to improve our quality process, then that can&rsquo;t be a bad thing. Event-driven programming encourages a code level design approach that follows the <a href="http://pragprog.com/articles/tell-dont-ask">Tell, Don&rsquo;t Ask</a> pattern. You tell an object to do something, which leads to an event, or events, being published. So, what&rsquo;s this got to do with TDD? In my experience, it&rsquo;s much easier to reason about your code, and define more coherent specifications, if your testing style mimics &ldquo;given this input (command), I expect this event, or events, to be produced&rdquo;. A test first approach is very compatible with this style, and makes you think in a much more behavioural (think BDD) way.</p>
 
 <h2>For the win</h2>
 
@@ -94,11 +93,11 @@
 </ul>
 
 
-<p>If you&rsquo;re going to go down the EDA route, why limit just your applications to an event driven style? If it&rsquo;s possible to maintain state via the events you&rsquo;re already publishing, why maintain a separate database on top? I think this is a really fascinating area of exploration &ndash; sometimes traditional CRUD might be a better choice, but the more I work with event sourcing, and the more comfortable I feel with EDA in general, the harder it becomes to find good reasons not to follow this path.</p>
+<p>If you&rsquo;re going to go down the EDA route, why limit just your applications to an event-driven style? If it&rsquo;s possible to maintain state via the events you&rsquo;re already publishing, why maintain a separate database on top? I think this is a really fascinating area of exploration &ndash; sometimes traditional CRUD might be a better choice, but the more I work with event sourcing, and the more comfortable I feel with EDA in general, the harder it becomes to find good reasons not to follow this path.</p>
 
 <h2>Conclusion</h2>
 
-<p>So that wraps up a fairly lengthy discussion on EDA and how an event driven mindset can promote a coherent strategy for the way you build software. One of the toughest things we face as software engineers is maintaining a consistency in style, especially in large teams. For me, EDA is an accessible and clearly defined way of thinking and, if you can introduce your whole team to that mindset, it will help to bridge the gap between doing the right thing (building product features your users love), and doing the thing right (consistent and elegant technical solutions).</p>
+<p>So that wraps up a fairly lengthy discussion on EDA and how an event-driven mindset can promote a coherent strategy for the way you build software. One of the toughest things we face as software engineers is maintaining a consistency in style, especially in large teams. For me, EDA is an accessible and clearly defined way of thinking and, if you can introduce your whole team to that mindset, it will help to bridge the gap between doing the right thing (building product features your users love), and doing the thing right (consistent and elegant technical solutions).</p>
 ]]></content>
   </entry>
   

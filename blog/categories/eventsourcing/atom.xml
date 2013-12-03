@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Eventsourcing | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/eventsourcing/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-03T15:51:29-08:00</updated>
+  <updated>2013-12-03T15:57:34-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -50,7 +50,7 @@
 
 <p>As previously alluded to, it&rsquo;s far from unusual to see fragments of event-driven programming in many applications. However, it&rsquo;s another step entirely to see event-driven programming adopted in such a way that it becomes an endemic architectural pattern &ndash; that is, where an entire platform uses events to underpin all its moving parts. To be successful with EDA, it needs to become a fundamental mindset that drives all design decisions, rather than just a pattern that used in some isolated parts of a wider system.</p>
 
-<p>I want to evaluate a series of application/platform features that, whilst might sit outside of core business workflows, fit really nicely with EDA. This should help to realise why EDA can be a very fruitful path to follow.</p>
+<p>I want to evaluate a series of application/platform features that, whilst may sit outside of core business workflows, fit really nicely with EDA. This should help to realise why EDA can be a very fruitful path to follow.</p>
 
 <h3>WebHooks (the Evented Web)</h3>
 

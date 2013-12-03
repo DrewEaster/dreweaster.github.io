@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: DDD | Responsibly Sourced]]></title>
-  <link href="http://DrewEaster.github.io/blog/categories/ddd/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Integration | Responsibly Sourced]]></title>
+  <link href="http://DrewEaster.github.io/blog/categories/integration/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
   <updated>2013-12-03T15:15:24-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
@@ -99,78 +99,6 @@
 <h2>Conclusion</h2>
 
 <p>So that wraps up a fairly lengthy discussion on EDA and how an event driven mindset can promote a coherent strategy for the way you build software. One of the toughest things we face as software engineers is maintaining a consistency in style, especially in large teams. For me, EDA is an accessible and clearly defined way of thinking and, if you can introduce your whole team to that mindset, it will help to bridge the gap between doing the right thing (building product features your users love), and doing the thing right (consistent and elegant technical solutions).</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[The fallacy of the omniscient domain model]]></title>
-    <link href="http://DrewEaster.github.io/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/"/>
-    <updated>2013-11-17T17:20:00-08:00</updated>
-    <id>http://DrewEaster.github.io/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model</id>
-    <content type="html"><![CDATA[<p>Complexity. As software engineers, it&rsquo;s pretty hard to make it beyond lunch without someone mentioning it. But, what is it exactly? Most of us probably think we sussed this out a long time ago &ndash; hell, we&rsquo;re probably preaching the KISS and DRY principles on a daily basis. However, complexity in software is a multi-faceted beast and, with that in mind, taking the time to reflect on your own view of complexity, you may reveal a bunch of defective preconceptions.</p>
-
-<p>One of these preconceptions, one which I&rsquo;ve failed to question effectively myself in the past, is that a &lsquo;simple&rsquo; domain model is one that can encompass the entire domain of an enterprise. The other preconception is that &lsquo;simple&rsquo; architecture means few moving parts.</p>
-
-<p>Let&rsquo;s address each one individually.</p>
-
-<p>Imagine a completely DRY, one-size-fits-all domain model that manages to perfectly model the domain of an entire enterprise. This model is infinitely malleable and able to accommodate future changes without adversely affecting existing code dependant on it. Are you struggling to imagine this? I hope so, because I don&rsquo;t think it&rsquo;s possible in anything other than the most basic of business domains. Regardless, this a very common approach and, instead of being simple, it adds an alarming amount of overall complexity. Ultimately, the intertwining of vaguely related entities makes it impossible to make changes in one place without having to untangle deep dependencies elsewhere.</p>
-
-<p>If, instead, you apply some of the core principles of Domain Driven Design (Domains, Subdomains, Bounded Contexts) to any enterprise, it&rsquo;s natural to materialise multiple models that exist within the different subdomains and contexts that make up the wider domain. This approach, which actually reflects the structure of the real business, reduces overall complexity &ndash; dependencies are untangled by design, making changes more achievable in isolation.</p>
-
-<p>One important thing to note here &ndash; you&rsquo;re not necessarily violating the DRY principle if an entity appears in multiple contexts. Maybe you&rsquo;ve just failed to successfully tweak the Ubiquitous Language for each context, such that you&rsquo;re recognising that entity to mean different things in those different contexts.</p>
-
-<p>So, now onto our second preconception &ndash; does simple architecture mean few moving parts? My previous argument may seem overly convenient given it implicitly provides support to my next case &ndash; it&rsquo;s most likely true that the introduction of multiple bounded contexts and/or subdomains will lead to more moving parts. But does that actually equate to complexity?</p>
-
-<p>We&rsquo;ve all seen over-engineered software that throws in a message queue here, another message queue over there, neither appearing to offer any discernible value. I&rsquo;m certainly not advocating that! But these over imaginative solutions shouldn&rsquo;t be confused with DDD influenced design decisions to separate contexts and integrate them effectively where necessary.</p>
-
-<p>Applying the KISS principle to architecture doesn&rsquo;t necessarily mean a system with fewer moving parts. A simple system is one that is highly adaptable and reactive to business changes &ndash; thus, the number of moving parts alone can&rsquo;t be considered a good measure of complexity.</p>
-
-<p>I hope the arguments I&rsquo;ve made in this article help to address some common misconceptions. I do believe the concept of a simple, single, all-knowing domain model is a fallacy. Feel confident to apply DDD principles, be proud of your separate cohesive models, and don&rsquo;t fear the additional moving parts you might adopt in the process.</p>
-
-<p>Complexity is not always what it seems.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Akka, DDD, CQRS, Event Sourcing and Me]]></title>
-    <link href="http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/"/>
-    <updated>2013-10-27T20:47:00-07:00</updated>
-    <id>http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me</id>
-    <content type="html"><![CDATA[<h2>Introduction</h2>
-
-<p>I’ve been involved in some really interesting discussions on the Akka User mailing list of late and thought it would be good to translate something I wrote, in one particular thread, into a blog post.</p>
-
-<p>I recently became rather obsessed with Domain Driven Design (DDD), CQRS and Event Sourcing. Given an existing passion for Akka (actor based programming), it dawned on me that the actor model might be an extremely good fit for the aforementioned “Holy Trio” of paradigms/patterns. Whilst trying to build a prototype, I brought up the topic on the Akka User mailing list and became aware that the Akka Team were actively working on Akka Persistence, which is well ahead of my dirty little prototype! For one reason or another, within a post on the mailing list, I ended up brain dumping my understanding of how Akka Persistence and the “Holy Trio” fits together, so here follows a blog friendly version!</p>
-
-<h2>Akka and the Holy Trio</h2>
-
-<p>So, it seems like the actor model fits very well with DDD, and I&rsquo;m not the first person to think this &ndash; <a href="https://vaughnvernon.co/">Vaughn Vernon</a> is well ahead of the game!</p>
-
-<p>It feels quite natural to me to consider an actor analogous to an aggregate root (in DDD speak). Rather than just seeing an actor as a mediator sitting in front of a database, you see the actor conceptually as an entity. By incorporating event sourcing, the actor works on the basis of processing a command (representing some action) and outputting one or many events that represent the result of processing that command. At all times the actor encapsulates its current state, which can simply be seen as the result of a series of ordered events applied to it.</p>
-
-<p>Initially, it’s actually quite helpful to ignore persistence requirements altogether and just rely on the state within the actor – in this way you don’t allow persistence concerns to influence the way you design your domain – I often find that domain models end up messy because, despite attempts to avoid doing so, persistence concerns end up, in one form or another, leaking into the business logic. Any approach to building a domain layer, that can genuinely remove the need to consider persistence technologies, is an attractive proposition in my mind!</p>
-
-<p>By following an event sourcing approach, persistence becomes no more complex than just persisting the events – that the actor produces – in an event store (journal). Given that events represent an immutable history of state changes, the journal can be append only, and that’s pretty exciting from a performance perspective. This is something that can quite clearly be bolted on once you’ve already put together a working in-memory only version of your domain – the actors themselves can be completely agnostic to the existence of the persistence mechanism. This is where Akka Persistence comes in – it works on the following basis:</p>
-
-<ol>
-<li>Actor receives command</li>
-<li>Actor processes command (applies business logic) and produces events that represent results of processing</li>
-<li>Events are persisted to journal</li>
-<li>Events are applied to actor so it can update it&rsquo;s internal state</li>
-</ol>
-
-
-<p>Akka Persistence pretty much deals with everything other than the command handling step, which represents your custom business logic – Akka is not quite good enough (yet) to do that bit ;–)</p>
-
-<p>Step 4 is quite important – it’s key that internal state is only applied once you’re sure events have been persisted to the journal. Also, by separating this step, it serves the additional purpose of allowing events in the journal to be replayed onto a “green” instance of the actor such to bring its internal state back up to current. Akka Persistence also has support for “snapshots” which allow you to take periodic snapshots of current state to be used as a performance optimisation when replaying events.</p>
-
-<p>So, to sum up, the actor model just fits with the “Holy Trio”. It seems to deal with a majority of the pain points experienced when building a domain layer using more traditional CRUD techniques. It’s pretty exciting to me how natural this design feels without any need to consider using an ORM ;–)</p>
-
-<h2>The Future</h2>
-
-<p>And that’s the end of the blog friendly version of my brain dump! I truly believe the combination of the actor model with DDD, CQRS and Event Sourcing is going to become a very prevalent domain model design solution in the future.</p>
-
-<p>I have to add that the Akka Team (including Patrik, Martin, Roland etc.) continue to be such an inspiration. Keep up the good work, guys!</p>
 ]]></content>
   </entry>
   

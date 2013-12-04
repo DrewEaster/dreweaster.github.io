@@ -46,14 +46,6 @@
 </head>
 
 <body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Responsibly Sourced</a></h1>
-  
-    <h2>Keep it simple, stupid!</h2>
-  
-</hgroup>
-
-</header>
   <nav role="navigation"><ul class="subscription" data-subscription="rss">
   <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
@@ -67,8 +59,19 @@
 </form>
   
 <ul class="main-navigation">
+    <li><a href="/">
+        <span class="blue_light">
+            Responsibly Sourced
+        </span>
+       
+           <span class="blue_dark">
+             Keep it simple, stupid!
+           </span>
+       
+    </a></li>
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About me</a></li>
 </ul>
 
 </nav>
@@ -216,14 +219,9 @@
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating...</li>
+    <a class="twitter-timeline" data-dnt="true" href="https://twitter.com/DrewEaster"  data-widget-id=""  data-link-color="#1863a1" data-tweet-limit="" data-chrome="noheader nofooter transparent noscrollbar">Tweets by @DrewEaster</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("DrewEaster", , );
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
   
     <p>Follow <a href="http://twitter.com/DrewEaster">@DrewEaster</a></p>
   

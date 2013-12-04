@@ -4,7 +4,7 @@
   <title><![CDATA[Category: EDA | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/eda/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-03T18:31:42-08:00</updated>
+  <updated>2013-12-03T19:55:46-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -24,7 +24,7 @@
 
 <blockquote><p>&ldquo;Event-driven architecture (EDA) is a software architecture pattern promoting the production, detection, consumption of, and reaction to events.&rdquo;</p></blockquote>
 
-<p>It&rsquo;s pretty unusual to encounter a software engineer who hasn&rsquo;t dabbled with publish-subscribe semantics &ndash; or anything resembling the <a href="http://en.wikipedia.org/wiki/Observer_pattern">Observer Pattern</a> &ndash; at some point in their engineering adventures. It&rsquo;s hard to ignore, when faced with a challenge to simplify some programming problem, the draw of a decoupling a producer of something from one or many consumers of that something. Not only does it divide responsibility (making code easier to test for starters), it also clears the way for an asynchronous programming model in use cases where producers needn&rsquo;t be blocked by the actions of an interested consumer.</p>
+<p>It&rsquo;s pretty unusual to encounter a software engineer who hasn&rsquo;t dabbled with publish-subscribe semantics &ndash; or anything resembling the <a href="http://en.wikipedia.org/wiki/Observer_pattern">Observer Pattern</a> &ndash; at some point in their engineering adventures. It&rsquo;s hard to ignore, when faced with a challenge to simplify some programming problem, the draw of decoupling a producer of something from one or many consumers of that something. Not only does it divide responsibility (making code easier to test for starters), it also clears the way for an asynchronous programming model in use cases where producers needn&rsquo;t be blocked by the actions of an interested consumer.</p>
 
 <p>If you can appreciate the power of publish-subscribe, you&rsquo;re unlikely to have much trouble in figuring out how Event-driven architecture (EDA) could help you. It only requires a small leap of faith to realise that pattern you used to solve that micro problem, in some isolated component within your system, can become a macro pattern to underpin a system-wide architectural style.</p>
 
@@ -44,7 +44,7 @@
 
 <h3>Reaction</h3>
 
-<p>Reaction is the fun part where a consumer actually performs some action in response to the event that it has consumed. For example, imagine you register a user on your website and you want to send them a welcome email. Rather than bundling the responsibility for sending email within your domain model, just create a consumer to listen into a UserRegisteredEvent and send an email from there. This nicely decouples the email delivery phase and, also, allows it to be done asynchronously &ndash; you probably don&rsquo;t need, or want, email delivery to be a synchronous action. Also, imagine you have further requirements relating to post registration behaviour &ndash; your domain model would soon become unwieldy with all that extra responsibility. Not one to want to violate the Single Responsibility Principle (SRP), you sensibly use event-driven programming to separate all those actions into separate consumers, allowing each behaviour to be tested in isolation, and retain simplicity in your domain model.</p>
+<p>Reaction is the fun part where a consumer actually performs some action in response to the event that it has consumed. For example, imagine you register a user on your website and you want to send them a welcome email. Rather than bundling the responsibility for sending email within your domain model, just create a consumer to listen into a UserRegisteredEvent and send an email from there. This nicely decouples the email delivery phase and also allows it to be done asynchronously &ndash; you probably don&rsquo;t need, or want, email delivery to be a synchronous action. Also, imagine you have further requirements relating to post registration behaviour &ndash; your domain model would soon become unwieldy with all that extra responsibility. Not one to want to violate the Single Responsibility Principle (SRP), you sensibly use event-driven programming to separate all those actions into separate consumers, allowing each behaviour to be tested in isolation, and retain simplicity in your domain model.</p>
 
 <h2>Events everywhere</h2>
 
@@ -56,7 +56,7 @@
 
 <p>WebHooks is a fairly high level concept that encompasses the use of HTTP as a form of publish-subscribe mechanism. Whilst there are more recent attempts to create more standards around this &ndash; <a href="http://progrium.com/blog/2012/11/19/from-webhooks-to-the-evented-web/">calling it the Evented Web</a> &ndash; the fundamental idea is to allow a consumer to register a callback URL with some remote resource (using HTTP) that will be invoked by the hosting service whenever some event occurs relating to that resource. A really well known example is post-commit hooks on Github &ndash; any external tool (e.g. a CI server, a bug tracker) can register interest in commits to a repository and react in whatever way that makes sense in their context.</p>
 
-<p>It&rsquo;s my belief that the Evented Web paradigm has got a lot of growth potential and will become a defacto expectation of any well designed service API. What&rsquo;s clear, I hope, is how easy it would be to add WebHooks functionality to your own application if you are already applying EDA across the board.</p>
+<p>I&rsquo;m pretty convinced that the Evented Web paradigm has got a lot of growth potential and will become a de facto expectation of any well designed service API. What should be clear is how easy it would be to add WebHooks functionality to your own application if you are already applying EDA across the board.</p>
 
 <h3>Big Data</h3>
 
@@ -82,22 +82,32 @@
 
 <h2>Going the whole hog with event sourcing</h2>
 
-<p>This discussion leads so elegantly into the final part of this blog post &ndash; event sourcing. Event sourcing is an approach to persistence that means the state of an entity &ndash; more specifically, an Aggregate Root in DDD speak &ndash; is made up of all the events, representing state changes, it has emitted over time. So, rather than than store current state in a database, you simply load the historical sequence of events (from an event store) and apply them in order to obtain current state. I will leave it up to the reader to pursue the full benefits of using event sourcing, but here are some of the headline wins:</p>
+<p>This discussion leads so elegantly into the final part of this blog post &ndash; event sourcing. Event sourcing is an approach to persistence that means the state of an entity &ndash; more specifically, an Aggregate Root in DDD speak &ndash; is made up of all the events, representing state changes, it has emitted over time. So, rather than store current state in a database, you simply load the historical sequence of events (from an event store) and apply them in order to obtain current state. I will leave it up to the reader to pursue the full benefits of using event sourcing, but here are some of the headline wins:</p>
 
 <ul>
 <li>Supports a simple, and very scalable approach to persistence. An event store can be as simple as an append only log file.</li>
 <li>Gives you a full history of every state change and that&rsquo;s great for producing an audit log (something you might want anyway, even without event sourcing).</li>
-<li>Can still utilise snapshots of current state for performance optimisation when replaying</li>
+<li>Can still utilise snapshots of current state for performance optimisation when replaying.</li>
 <li>Very compatible with a test first, behavioural approach to testing.</li>
 <li>Plays very nice with the <a href="http://martinfowler.com/bliki/CQRS.html">CQRS</a> architectural pattern, a very practical way to bake scalability into your applications by maintaining separate paths for reads and writes.</li>
 </ul>
 
 
-<p>If you&rsquo;re going to go down the EDA route, why limit just your applications to an event-driven style? If it&rsquo;s possible to maintain state via the events you&rsquo;re already publishing, why maintain a separate database on top? I think this is a really fascinating area of exploration &ndash; sometimes traditional CRUD might be a better choice, but the more I work with event sourcing, and the more comfortable I feel with EDA in general, the harder it becomes to find good reasons not to follow this path.</p>
+<p>If you&rsquo;re going to go down the EDA route, why limit just your applications to an event-driven style? If it&rsquo;s possible to maintain state via the events you&rsquo;re already publishing, why maintain a separate database on top? Storing events for all time might seem like a storage burden but, seriously, are we still worrying about the cost of storage in 2013? Storing current state in a database is a &lsquo;lossy&rsquo; approach &ndash; once you&rsquo;ve overwritten existing state, you can never get it back. Martin Thompson summed this up so concisely in a recent tweet:</p>
+
+<blockquote class="twitter-tweet" data-conversation="none" lang="en"><p><a href="https://twitter.com/ashic">@ashic</a> <a href="https://twitter.com/hintjens">@hintjens</a> I like, &quot;A database is a cache of the event log&quot;.</p>&mdash; Martin Thompson (@mjpt777) <a href="https://twitter.com/mjpt777/statuses/407534444803661824">December 2, 2013</a></blockquote>
+
+
+<script async src="http://DrewEaster.github.io//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>There are way too many compelling reasons for wanting to keep a history of everything and it&rsquo;s impossible to avoid being courted by that proposition.</p>
+
+<p>I think this is a really fascinating area of exploration &ndash; sometimes traditional CRUD might be a better choice, but the more I work with event sourcing, and the more comfortable I feel with EDA in general, the harder it becomes to find good reasons against following this path.</p>
 
 <h2>Conclusion</h2>
 
-<p>So that wraps up a fairly lengthy discussion on EDA and how an event-driven mindset can promote a coherent strategy for the way you build software. One of the toughest things we face as software engineers is maintaining a consistency in style, especially in large teams. For me, EDA is an accessible and clearly defined way of thinking and, if you can introduce your whole team to that mindset, it will help to bridge the gap between doing the right thing (building product features your users love), and doing the thing right (consistent and elegant technical solutions).</p>
+<p>So that wraps up a fairly lengthy discussion on EDA and how an event-driven mindset can promote a coherent strategy for the way you build software. One of the toughest things we face as software engineers is maintaining a consistency in style, especially in large teams. My ideal vision is for code to speak the architecture patterns on which it is crafted, such that no engineer could ever doubt what is expected of them when refactoring or adding new features. For me, EDA is an enabler of this vision, and will help to bridge the gap between doing the right thing (building product features your users love), and doing the thing right (consistent and elegant technical solutions).</p>
 ]]></content>
   </entry>
   

@@ -156,7 +156,7 @@
 
 <p>There is possibly some crossover here with monitoring, and even Big Data, but I think it deserves its own special mention. If you imagine logs as comprehensive streams of events, assuming you&rsquo;ve followed an EDA style, you can pretty much get log analysis for free. Just suck your logs into some analysis tools (e.g. <a href="http://logstash.net/">Logstash</a> and <a href="http://www.elasticsearch.org/overview/kibana/">Kibana</a>), and you&rsquo;re pretty much good to go. Just remember that it&rsquo;s perfectly reasonable to use events to represent errors too (which could contain any relevant stack trace).</p>
 
-<h3>Test-driven Development (TDD)</h3>
+<h3>Test-driven development (TDD)</h3>
 
 <p>Okay, so TDD is not an application feature, it&rsquo;s part of the engineering process. However, if our architecture decisions can help to improve our quality process, then that can&rsquo;t be a bad thing. Event-driven programming encourages a code level design approach that follows the <a href="http://pragprog.com/articles/tell-dont-ask">Tell, Don&rsquo;t Ask</a> pattern. You tell an object to do something, which leads to an event, or events, being published. So, what&rsquo;s this got to do with TDD? In my experience, it&rsquo;s much easier to reason about your code, and define more coherent specifications, if your testing style mimics &lsquo;given this input (command), I expect this event, or events, to be produced&rsquo;. A test first approach is very compatible with this style, and makes you think in a much more behavioural (think BDD) way.</p>
 

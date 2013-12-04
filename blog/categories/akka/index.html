@@ -20,16 +20,15 @@
   
   <link rel="canonical" href="http://DrewEaster.github.ioblog/categories/akka">
   <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/styles.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Responsibly Sourced" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
   <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
+  <script src="/javascripts/jquery.sidr.min.js"></script>
+  <script src="/javascripts/ah-blue.js"></script>
+  
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -44,42 +43,96 @@
   </script>
 
 
-</head>
+</head> 
 
 <body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Responsibly Sourced</a></h1>
-  
-    <h2>Keep it simple, stupid!</h2>
-  
-</hgroup>
+  <div class="aux-container">
+    <a id="nav-toggle" href="#sidr"></a>
+    <a id="search-toggle"></a>
+</div>
 
+<header class="header-container clearfix">
+        <a href="/"><img src="/images/ah-frame.svg" onerror="this.onerror=null; this.src='ah-frame.png'"></a>
 </header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:DrewEaster.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-</ul>
 
-</nav>
-  <div id="main">
-    <div id="content">
+  <div class="main-container">
+    <div class="main wrapper clearfix">
+    	
+    	<aside>
+			
+			  	<div class="search-container">
+					<form action="http://google.com/search" method="get">
+						<fieldset role="search">
+							<input type="hidden" name="q" value="site:blog.alexharr.is" />
+							<input class="search-field" type="text" name="q" results="0" placeholder=""/>
+							<input class="submit" type="submit" value=""/>
+						</fieldset>
+					</form>
+				</div>
+			
+		  <div id="main-nav">
+    <nav>
+        <ul>
+        	<li>
+        		
+					
+<section>
+	<span>
+		<img src="http://www.gravatar.com/avatar/3826ebb004235b010639bd0b347707fc?s=300" alt="Gravatar of Andrew Easter " title="Gravatar of Andrew Easter" />
+	</span>
+</section>
+<section>
+    <h1>About Me</h1>
+    <p>Hi, my name is Andrew and I'm a software engineer. It's pretty cool.</p>
+</section><h3>Recent Posts</h3>
+<ul>
+	
+    <li>
+    	<a href="/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture FTW</a>
+    </li>
+    
+    <li>
+    	<a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/">The Fallacy of the Omniscient Domain Model</a>
+    </li>
+    
+    <li>
+    	<a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
+    </li>
+    
+    <li>
+    	<a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a>
+    </li>
+    
+    <li>
+    	<a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a>
+    </li>
+    
+</ul>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline" href="https://twitter.com/DrewEaster" data-widget-id="354179588873658368">Tweets by @DrewEaster</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</section>
+				
+        	</li>
+        	<li>
+        		<ul>
+                    <li>Projects - <a href="http://www.alexharr.is" target="_blank">alexharr.is</a>
+        			<li>Github - <a href="http://www.github.com/alexharris" target="_blank">github.com/alexharris</a></li>
+                    <li>Twitter - <a href="http://www.twitter.com/alexharris6" target="_blank">@alexharris6</a></li>
+                    <li>Email - <a href="mailto:alexharris6@gmail.com" target="_blank">alexharris6 at gmail</a></li>
+        		</ul>
+        	</li>
+        </ul>
+    </nav>
+</div>
+		</aside>
+		
       <div>
 <article role="article">
   
   <header>
     <h1 class="entry-title">Category: Akka</h1>
-    
   </header>
   
   <div id="blog-archives" class="category">
@@ -119,64 +172,18 @@
 
   
 </article>
-
 </div>
-
-<aside class="sidebar">
-  
-    
-<section>
-	<span>
-		<img src="http://www.gravatar.com/avatar/3826ebb004235b010639bd0b347707fc?s=300" alt="Gravatar of Andrew Easter " title="Gravatar of Andrew Easter" />
-	</span>
-</section>
-<section>
-    <h1>About Me</h1>
-    <p>Hi, my name is Andrew and I'm a software engineer. It's pretty cool.</p>
-</section><section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture FTW</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/">The Fallacy of the Omniscient Domain Model</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/">Reactive, Real-time Log Search With Play, Akka, AngularJS and Elasticsearch</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-    <h1>Twitter</h1>
-    <a class="twitter-timeline" href="https://twitter.com/DrewEaster" data-widget-id="354179588873658368">Tweets by @DrewEaster</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-</section>
-  
-</aside>
-
-
     </div>
   </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Andrew Easter -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+  <footer class="main-footer">
+	<section class="interior-footer">
+		<span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+	</section>
 </footer>
+
+
   
+
 
 <script type="text/javascript">
       var disqus_shortname = 'responsiblysourced';
@@ -215,7 +222,6 @@
       document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
     })();
   </script>
-
 
 
 

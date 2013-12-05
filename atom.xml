@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-03T20:18:57-08:00</updated>
+  <updated>2013-12-04T22:06:19-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -12,6 +12,19 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[The Silicon Valley Mindset]]></title>
+    <link href="http://DrewEaster.github.io/blog/2013/12/04/the-silicon-valley-mindset/"/>
+    <updated>2013-12-04T22:01:00-08:00</updated>
+    <id>http://DrewEaster.github.io/blog/2013/12/04/the-silicon-valley-mindset</id>
+    <content type="html"><![CDATA[<p>As I&rsquo;m currently on a temporary work assignment in San Jose, I recently wrote an article for <a href="http://thecroydoncitizen.com/">The Croydon Citizen</a> about my experiences in Silicon Valley. It&rsquo;s great to have become part of the <a href="http://croydontechcity.com/">Croydon Tech City</a> movement, and so it was nice to contribute an article in support of the great work being done to promote Croydon as a new hub for tech startups in the UK.</p>
+
+<p>Checkout my article here:</p>
+
+<p>[<a href="http://thecroydoncitizen.com/croydon-tech-city/silicon-valley-mindset/">http://thecroydoncitizen.com/croydon-tech-city/silicon-valley-mindset/</a>]</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Event-driven Architecture FTW]]></title>

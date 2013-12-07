@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-07T09:58:31-08:00</updated>
+  <updated>2013-12-07T10:14:20-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -32,7 +32,7 @@
 
 <p>Whilst NoSQL technology is becoming more popular, it’s still fairly normal to see domain modelling tackled using entity relationship (ER) diagrams &ndash; something quite familiar to engineers and DBAs. That wily old fox, the relational model, is still recognised by many as the de facto way to practice domain modelling. However, Domain Driven Design (DDD) teaches us a much better way, and does not make room for persistence concerns in our conversations &ndash; models spawned using DDD practices typically appear very different to what they’d look like had ER modelling been applied instead.</p>
 
-<p>You’re probably familiar with the [object-relational impedance mismatch)[<a href="http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch">http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch</a>] concept, but I think our problems extend much further than that; I believe DDD teaches us of a domain-relational impedance mismatch. That is, the relational model is not a natural fit for addressing domain model complexity, and thus should not be trusted to do so.</p>
+<p>You’re probably familiar with the <a href="http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch">object-relational impedance mismatch</a> concept, but I think our problems extend much further than that; I believe DDD teaches us of a domain-relational impedance mismatch. That is, the relational model is not a natural fit for addressing domain model complexity, and thus should not be trusted to do so.</p>
 
 <h2>The light at the end of the tunnel</h2>
 

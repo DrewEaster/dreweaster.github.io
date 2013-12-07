@@ -4,7 +4,7 @@
   <title><![CDATA[Category: EDA | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/eda/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-07T09:54:18-08:00</updated>
+  <updated>2013-12-07T09:57:00-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -26,7 +26,7 @@
 
 <h2>The Domain-Relational Impedance Mismatch</h2>
 
-<p>In my experience of domain modelling, the biggest mistake I’ve seen made, time and time again, is to fail to involve the most important people ‘in the room’. The reason for this is that far too many projects take a <em>persistence oriented</em> approach to modelling, as opposed to a <em>business oriented</em> approach. Put simply, by tending to address model genesis using only technical team members, teams get sucked into allowing technical persistence concerns to shape their domain model. It’s not unusual for domain experts to be involved only at the user interface level, leaving software engineers and DBAs to make decisions that they are probably the least qualified to be making. The ultimate success of a software project resides on how well domain complexity has been tackled, and so it seems crazy for domain experts to be absent from the modelling process.</p>
+<p>In my experience of domain modelling, the biggest mistake I’ve seen made, time and time again, is to fail to involve the most important people ‘in the room’. The reason for this is that far too many projects take a <em>persistence oriented</em> approach to modelling, as opposed to a <em>business oriented</em> approach. Put simply, by tending to address model genesis using only technical team members, teams get sucked into allowing technical persistence concerns to shape their modelling approach. It’s not unusual for domain experts to be involved only at the user interface level, leaving software engineers and DBAs to make decisions that they are probably the least qualified to be making. The ultimate success of a software project resides on how well domain complexity has been tackled, and so it seems crazy for domain experts to be absent from the modelling process.</p>
 
 <p>Let’s be absolutely clear &ndash; a domain model exists in spite of persistence technology, not because of it. A model is not a technical concept; it is a reflection of a business domain that exists in real-life, not inside a machine.</p>
 

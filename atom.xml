@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-04T22:07:27-08:00</updated>
+  <updated>2013-12-07T09:54:18-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -12,6 +12,37 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[What a storming idea]]></title>
+    <link href="http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/"/>
+    <updated>2013-12-07T09:46:00-08:00</updated>
+    <id>http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea</id>
+    <content type="html"><![CDATA[<p>Firstly, an important disclosure &ndash; having only just stumbled across the practice of <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">Event Storming</a>, I’ve not yet had the opportunity to experiment with it myself. However, sometimes a concept/practice makes such immediate sense in one’s mind, that one feels compelled to talk about it!</p>
+
+<p>This post feels like quite a natural successor to my previous post on <a href="http://www.dreweaster.com/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture</a>. In that post, I discussed some of the tangible benefits of EDA, and this follow up introduces the practice of <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">Event Storming</a>, a fledgling Domain Driven Design influenced practice that goes hand in hand with EDA to assist product teams in exploring the complexity of their business domain.</p>
+
+<p>It’s not my intention to write a long article on Event Storming &ndash; I encourage you to read Alberto Brandolini’s  <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">introduction</a> instead &ndash; but I want to share my biggest takeaways from this new learning.</p>
+
+<h2>The Domain-Relational Impedance Mismatch</h2>
+
+<p>In my experience of domain modelling, the biggest mistake I’ve seen made, time and time again, is to fail to involve the most important people ‘in the room’. The reason for this is that far too many projects take a <em>persistence oriented</em> approach to modelling, as opposed to a <em>business oriented</em> approach. Put simply, by tending to address model genesis using only technical team members, teams get sucked into allowing technical persistence concerns to shape their domain model. It’s not unusual for domain experts to be involved only at the user interface level, leaving software engineers and DBAs to make decisions that they are probably the least qualified to be making. The ultimate success of a software project resides on how well domain complexity has been tackled, and so it seems crazy for domain experts to be absent from the modelling process.</p>
+
+<p>Let’s be absolutely clear &ndash; a domain model exists in spite of persistence technology, not because of it. A model is not a technical concept; it is a reflection of a business domain that exists in real-life, not inside a machine.</p>
+
+<p>Whilst NoSQL technology is becoming more popular, it’s still fairly normal to see domain modelling tackled using entity relationship (ER) diagrams &ndash; something quite familiar to engineers and DBAs. That wily old fox, the relational model, is still recognised by many as the de facto way to practice domain modelling. However, Domain Driven Design (DDD) teaches us a much better way to address modelling, and does not make room for persistence concerns in modelling conversations &ndash; models spawned using DDD practices typically appear very different to what they’d look like had ER modelling been applied instead.</p>
+
+<p>You’re probably familiar with the [object-relational impedance mismatch)[<a href="http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch">http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch</a>] concept, but I think our problems extend much further than that; I believe DDD teaches us of a domain-relational impedance mismatch. That is, the relational model is not a natural fit for addressing domain model complexity, and thus should not be trusted to do so.</p>
+
+<h2>The light at the end of the tunnel</h2>
+
+<p>So, we know we&rsquo;re doing it wrong, but how do we then ensure we get both the right people in the room (domain experts), and a method to support effective communication of domain complexity? This is where I believe we should look to Event Storming to help us out.</p>
+
+<p>From my initial learnings on Event Storming, I can wholeheartedly say that this technique appears to offer a very attractive way to ensure focus remains on the business rather than technical implementation. It forces the right people &ndash; domain experts &ndash; to be in the room, thus ensuring core business flows are identified, bounded contexts are defined and consistency boundaries are clarified.</p>
+
+<p>Event Storming does infer an event-driven architecture (EDA), but I hope my <a href="http://www.dreweaster.com/blog/2013/12/02/event-driven-architecture-ftw/">previous post</a> serves to address why you should be doing that anyway. It finally gives us an accessible technique that allows domain experts and technical specialists to work together to tackle domain complexity effectively. It’s a really exciting prospect and I look forward to applying it both in existing and future projects.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[The Silicon Valley Mindset]]></title>

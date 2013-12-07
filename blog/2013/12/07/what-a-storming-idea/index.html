@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Play2 &amp; Scala – A new beginning - Responsibly Sourced</title>
+  <title>What a storming idea - Responsibly Sourced</title>
   <meta name="author" content="Andrew Easter">
 
   
-  <meta name="description" content="Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to &hellip;">
+  <meta name="description" content="Firstly, an important disclosure &ndash; having only just stumbled across the practice of Event Storming, I’ve not yet had the opportunity to &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/">
+  <link rel="canonical" href="http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -82,7 +82,7 @@
   
   <header>
     
-      <h1 class="entry-title">Play2 &amp; Scala – a New Beginning</h1>
+      <h1 class="entry-title">What a Storming Idea</h1>
     
     
       <p class="meta">
@@ -98,7 +98,7 @@
   
 
 
-<time datetime="2012-10-14T11:49:00-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time>
+<time datetime="2013-12-07T09:46:00-08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2013</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -107,15 +107,29 @@
   </header>
 
 
-<div class="entry-content"><p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
+<div class="entry-content"><p>Firstly, an important disclosure &ndash; having only just stumbled across the practice of <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">Event Storming</a>, I’ve not yet had the opportunity to experiment with it myself. However, sometimes a concept/practice makes such immediate sense in one’s mind, that one feels compelled to talk about it!</p>
 
-<p>The murmurings for this new chapter began a few weeks ago when I enrolled on Martin Odersky’s “Functional Programming Principles in Scala” course – a fantastic FREE online course that runs for seven weeks, supported by <a href="http://www.epfl.ch/">EPFL</a> in Switzerland. For sure, I’ve been well aware of the rise of Scala within the industry but had never gotten round to really indulging in this exciting language (except, maybe, for getting through a few chapters of <a href="http://www.artima.com/shop/programming_in_scala_2ed/">Programming in Scala</a> on my Kindle). The same goes for the <a href="http://www.playframework.org/">Play! Framework</a>, something I’ve kept an eye on at arm’s length for quite a few years now.</p>
+<p>This post feels like quite a natural successor to my previous post on <a href="http://www.dreweaster.com/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture</a>. In that post, I discussed some of the tangible benefits of EDA, and this follow up introduces the practice of <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">Event Storming</a>, a fledgling Domain Driven Design influenced practice that goes hand in hand with EDA to assist product teams in exploring the complexity of their business domain.</p>
 
-<p>I’m now into the fourth week of Odersky’s course and, following completion of the first three challenging, but almost perversely absorbing, assignments, today I decided it was time to fire up my first Play2 application. Fortunately, I picked up a little freelance client project last week and it was a bit of a no brainer, given my newly mobilised appetite for all things Scala, to implement it using a technology (Play!) I really knew was overdue an evaluation.</p>
+<p>It’s not my intention to write a long article on Event Storming &ndash; I encourage you to read Alberto Brandolini’s  <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">introduction</a> instead &ndash; but I want to share my biggest takeaways from this new learning.</p>
 
-<p>Just a few hours after downloading Play! 2.0.4, I have fallen hopelessly under it’s spell – I’ve been wandering around the house in what resembles a drunken stupor, close to screaming with excitement at what I’ve learned and been able to achieve in just one afternoon. My face aches, my jaw having been locked into a permanent smile. I know this is the future, though I feel a certain degree of sadness as I acknowledge my love affair with JEE, and it’s wonderful layer upon layer of abstraction, to be very nearly over (we need to stay friends, mind – my day job will see to that).</p>
+<h2>The Domain-Relational Impedance Mismatch</h2>
 
-<p>The anticipation. The butterflies. So the journey begins.</p>
+<p>In my experience of domain modelling, the biggest mistake I’ve seen made, time and time again, is to fail to involve the most important people ‘in the room’. The reason for this is that far too many projects take a <em>persistence oriented</em> approach to modelling, as opposed to a <em>business oriented</em> approach. Put simply, by tending to address model genesis using only technical team members, teams get sucked into allowing technical persistence concerns to shape their domain model. It’s not unusual for domain experts to be involved only at the user interface level, leaving software engineers and DBAs to make decisions that they are probably the least qualified to be making. The ultimate success of a software project resides on how well domain complexity has been tackled, and so it seems crazy for domain experts to be absent from the modelling process.</p>
+
+<p>Let’s be absolutely clear &ndash; a domain model exists in spite of persistence technology, not because of it. A model is not a technical concept; it is a reflection of a business domain that exists in real-life, not inside a machine.</p>
+
+<p>Whilst NoSQL technology is becoming more popular, it’s still fairly normal to see domain modelling tackled using entity relationship (ER) diagrams &ndash; something quite familiar to engineers and DBAs. That wily old fox, the relational model, is still recognised by many as the de facto way to practice domain modelling. However, Domain Driven Design (DDD) teaches us a much better way to address modelling, and does not make room for persistence concerns in modelling conversations &ndash; models spawned using DDD practices typically appear very different to what they’d look like had ER modelling been applied instead.</p>
+
+<p>You’re probably familiar with the [object-relational impedance mismatch)[<a href="http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch">http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch</a>] concept, but I think our problems extend much further than that; I believe DDD teaches us of a domain-relational impedance mismatch. That is, the relational model is not a natural fit for addressing domain model complexity, and thus should not be trusted to do so.</p>
+
+<h2>The light at the end of the tunnel</h2>
+
+<p>So, we know we&rsquo;re doing it wrong, but how do we then ensure we get both the right people in the room (domain experts), and a method to support effective communication of domain complexity? This is where I believe we should look to Event Storming to help us out.</p>
+
+<p>From my initial learnings on Event Storming, I can wholeheartedly say that this technique appears to offer a very attractive way to ensure focus remains on the business rather than technical implementation. It forces the right people &ndash; domain experts &ndash; to be in the room, thus ensuring core business flows are identified, bounded contexts are defined and consistency boundaries are clarified.</p>
+
+<p>Event Storming does infer an event-driven architecture (EDA), but I hope my <a href="http://www.dreweaster.com/blog/2013/12/02/event-driven-architecture-ftw/">previous post</a> serves to address why you should be doing that anyway. It finally gives us an accessible technique that allows domain experts and technical specialists to work together to tackle domain complexity effectively. It’s a really exciting prospect and I look forward to applying it both in existing and future projects.</p>
 </div>
 
 
@@ -138,12 +152,12 @@
   
 
 
-<time datetime="2012-10-14T11:49:00-07:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time>
+<time datetime="2013-12-07T09:46:00-08:00" pubdate data-updated="true">Dec 7<span>th</span>, 2013</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/play/'>Play</a>, <a class='category' href='/blog/categories/scala/'>Scala</a>
+    <a class='category' href='/blog/categories/ddd/'>DDD</a>, <a class='category' href='/blog/categories/eda/'>EDA</a>, <a class='category' href='/blog/categories/event-storming/'>Event Storming</a>
   
 </span>
 
@@ -152,7 +166,7 @@
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/" data-via="DrewEaster" data-counturl="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/" data-via="DrewEaster" data-counturl="http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/" >Tweet</a>
   
   
   
@@ -163,8 +177,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2013/12/04/the-silicon-valley-mindset/" title="Previous Post: The Silicon Valley Mindset">&laquo; The Silicon Valley Mindset</a>
       
-        <a class="basic-alignment right" href="/blog/2013/03/16/taking-a-walk-on-the-wild-side/" title="Next Post: Taking a walk on the wild side">Taking a walk on the wild side &raquo;</a>
       
     </p>
   </footer>
@@ -239,8 +253,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/';
-        var disqus_url = 'http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/';
+        var disqus_identifier = 'http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/';
+        var disqus_url = 'http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/';
         var disqus_script = 'embed.js';
       
     (function () {

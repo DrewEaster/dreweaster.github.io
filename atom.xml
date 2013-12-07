@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-07T10:22:12-08:00</updated>
+  <updated>2013-12-07T10:23:04-08:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -30,7 +30,7 @@
 
 <p>Let’s be absolutely clear &ndash; a domain model exists in spite of persistence technology, not because of it. A model is not a technical concept; it is a reflection of a business domain that exists in real-life, not inside a machine.</p>
 
-<blockquote><p>&ldquo;a domain model exists in spite of persistence technology, not because of it&rdquo;</p></blockquote>
+<blockquote><p>&ldquo;A domain model exists in spite of persistence technology, not because of it.&rdquo;</p></blockquote>
 
 <p>Whilst NoSQL technology is becoming more popular, it’s still fairly normal to see domain modelling tackled using entity relationship (ER) diagrams &ndash; something quite familiar to engineers and DBAs. That wily old fox, the relational model, is still recognised by many as the de facto way to practice domain modelling. However, Domain Driven Design (DDD) teaches us a much better way, and does not make room for persistence concerns in our conversations &ndash; models spawned using DDD practices typically appear very different to what they’d look like had ER modelling been applied instead.</p>
 

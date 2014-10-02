@@ -49,9 +49,7 @@ A tech startup is not just about tech
 
 Marketing and sales will most likely be 80% of the effort in a startup's success story. Don't be under any illusions - a good product won't sell itself. A warning for you techies out there - don't be fooled into thinking that you only need tech skills to get a business off the ground. It's not true, seriously!
 
-Accordingly, non-techie entrepreneurs shouldn't feel disadvantaged that they don't have tech skills.
-
-This is not to say that tech isn't hugely important (I obviously think it is), but it's not a one-way ticket to success.
+Accordingly, non-techie entrepreneurs shouldn't feel disadvantaged that they don't have tech skills. This is not to say that tech isn't hugely important (I obviously think it is), but it's not a one-way ticket to success.
 
 Recognise when the game is up
 -----------------------------

@@ -29,17 +29,29 @@ Whilst clearly important, it's not enough to just identify a problem. Yes, your 
 Be patient before diving in
 ---------------------------
 
-Even if you can afford to, it might not be a good idea to quit your job until you've found something you are really passionate about building/solving. Identify a problem you've had in your own life/job, don't try to force ideas out of nothing - it's contrived. You have to be patient and let the idea come to you - if that means working for others until you do, then so be it. Make the most of working for larger companies where you can network with those in business areas you are not familiar with. The gaps will be there, you just need to put yourself in the position to see them.
+Even if you can afford to, it might not be a good idea to quit your job until you've found something you are really passionate about building/solving. Identify a problem you've had in your own life/job, don't try to force ideas out of nothing - it's contrived. You have to be patient and let the idea come to you - if that means working for others until you do, then so be it.
+
+Make the most of working for larger companies where you can network with those in business areas you are not familiar with. The gaps will be there, you just need to put yourself in the position to see them.
 
 It's much harder than you could possibly imagine
 ------------------------------------------------
 
-It's going to be infinitely more difficult to succeed than you think. Success is a combination of a good idea, impeccable execution, luck, who you know etc. There is a myth doing the rounds that it's easier than ever to start a startup. In reality it's just a cultural mind shift, the actual chances of succeeding are just as low as they have ever been. The 'anyone can build an app' delusion is really damaging. And, it will take five times longer to succeed than you probably think it will. Most successful startups have been operating a lot longer than you think they have - you're facing many years of blood, sweat and tears (and you still might fail). Also, be willing to acknowledge, therefore, that the idea of running your own business might look much better on paper than it does in reality.
+It's going to be infinitely more difficult to succeed than you think. Success is a combination of a good idea, impeccable execution, luck, who you know etc.
+
+There is a myth doing the rounds that it's easier than ever to start a startup. In reality it's just a cultural mind shift, the actual chances of succeeding are just as low as they have ever been. The 'anyone can build an app' delusion is really unhelpful.
+
+And, it will take five times longer to succeed than you probably think it will. Most successful startups have been operating a lot longer than you think they have - you're facing many years of blood, sweat and tears (and you still might fail).
+
+Also, be willing to acknowledge, therefore, that the idea of running your own business might look much better on paper than it does in reality.
 
 A tech startup is not just about tech
 -------------------------------------
 
-Marketing and sales will most likely be 80% of the effort in a startup's success story. Don't be under any illusions - a good product won't sell itself. A warning for you techies out there - don't be fooled into thinking that you only need tech skills to get a business off the ground. It's not true, seriously! Accordingly, non-techie entrepreneurs shouldn't feel disadvantaged that they don't have tech skills. This is not to say that tech isn't hugely important (I obviously think it is), but it's not a one-way ticket to success.
+Marketing and sales will most likely be 80% of the effort in a startup's success story. Don't be under any illusions - a good product won't sell itself. A warning for you techies out there - don't be fooled into thinking that you only need tech skills to get a business off the ground. It's not true, seriously!
+
+Accordingly, non-techie entrepreneurs shouldn't feel disadvantaged that they don't have tech skills.
+
+This is not to say that tech isn't hugely important (I obviously think it is), but it's not a one-way ticket to success.
 
 Recognise when the game is up
 -----------------------------

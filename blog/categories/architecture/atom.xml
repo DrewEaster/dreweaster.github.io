@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Architecture | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/architecture/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2013-12-07T10:23:04-08:00</updated>
+  <updated>2014-10-02T16:02:02+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Event-driven Architecture FTW]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/12/02/event-driven-architecture-ftw/"/>
-    <updated>2013-12-02T21:41:00-08:00</updated>
+    <updated>2013-12-02T21:41:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/12/02/event-driven-architecture-ftw</id>
     <content type="html"><![CDATA[<h2>A quick primer on EDA</h2>
 

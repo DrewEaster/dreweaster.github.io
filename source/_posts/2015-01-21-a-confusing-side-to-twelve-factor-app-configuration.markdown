@@ -33,3 +33,7 @@ Sometimes, however, the advantages of predictable, easy to reason about deployme
 I'm not debating here what's the right or wrong way, I'm just pointing out that the Twelve Factor advice is very clear about the meaning of a 'Release', and, therefore, any method that circumvents this, cannot claim to be compatible with the guidelines.
 
 Just saying.
+
+### UPDATE 2015-01-21 20:10
+
+Spring are also claiming that the [Spring Cloud](http://projects.spring.io/spring-cloud/spring-cloud.html) approach to configuration is Twelve Factor compatible in this [blog post](http://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring?utm_content=bufferfa5a5&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer). I think this is making the same mistake as Hashicorp. If configuration is able to change independently from a release - as is described in this post - then it's not in the spirit of the Twelve Factor App.

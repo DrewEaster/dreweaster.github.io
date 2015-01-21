@@ -25,8 +25,8 @@ Therefore, any approach to managing configuration, in a similar way to Hashicorp
 
 One could quite easily challenge the 'Build + Config = Release' advice:
 
-1) It doesn't appear to leave any room for runtime config changes
-2) It's not completely clear how it would work with dynamic service discovery
+1. It doesn't appear to leave any room for runtime config changes
+2. It's not completely clear how it would work with dynamic service discovery
 
 Sometimes, however, the advantages of predictable, easy to reason about deployments outweigh the benefits of such niceties
 

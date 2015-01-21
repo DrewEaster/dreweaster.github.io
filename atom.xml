@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-01-21T19:49:30+00:00</updated>
+  <updated>2015-01-21T19:52:06+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -18,15 +18,34 @@
     <link href="http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/"/>
     <updated>2015-01-21T18:39:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration</id>
-    <content type="html"><![CDATA[<p>I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the <a href="http://12factor.net">Twelve Factor App</a> guidelines. Here was a reliable set of principles &ndash; born out of real experience &ndash; that immediately hit home, providing sensible advice for overcoming the many pitfalls developers and operations teams have fought relentless battles with time and time again.</p>
+    <content type="html"><![CDATA[<p>I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the <a href="http://12factor.net">Twelve Factor App</a> guidelines. Here was a reliable set of principles &ndash; born out of real life experience &ndash; that immediately hit home, providing sensible advice for overcoming the many pitfalls developers and operations teams have fought relentless battles with time and time again.</p>
 
-<p>One of the principles that I was especially able to connect with is the advice regarding from where applications should read their <a href="http://12factor.net/config">configuration</a>. Having regularly encountered config file hell over the years, this simple, platform agnostic approach to supplying config to an application makes a whole lot of sense. There have, though, been some misunderstandings with regard to this advice, <a href="http://blog.doismellburning.co.uk/2014/10/06/twelve-factor-config-misunderstandings-and-advice/">and this blog post</a> by Kristian Glass does a good job of highlighting one such misunderstanding &ndash; Twelve Factor does not say how the environment should be populated, only that an app should read from it.</p>
+<p>One of the principles that I was especially able to connect with is the advice regarding from where applications should read their <a href="http://12factor.net/config">configuration</a>. Having regularly encountered config file hell over the years, this simple, platform agnostic approach to supplying config to an application makes a whole lot of sense. There have, though, been some misunderstandings with regard to this advice, <a href="http://blog.doismellburning.co.uk/2014/10/06/twelve-factor-config-misunderstandings-and-advice/">and this blog post</a> by Kristian Glass does a good job of highlighting one such misunderstanding &ndash; Twelve Factor does not dictate from where the environment should be populated, only that an app should read from it.</p>
 
 <p>So, with a major misunderstanding out the way, we are left with a whole bunch of options as to how we populate the environment. Outside of the extreme abstraction of a PaaS environment like Heroku, something like Consul &ndash; the distributed key/value store &ndash; is one such solution. And in this <a href="https://hashicorp.com/blog/twelve-factor-consul.html">blog post</a> by <a href="https://hashicorp.com">Hashicorp</a>, that very solution is covered quite nicely.</p>
 
-<p>However, I&rsquo;d like to challenge Hashicorp&rsquo;s claim that this approach is compatible with Twelve Factor principles. My personal opinion &ndash; on which I&rsquo;m very happy to be challenged &ndash; is that there is a further, quite critical, piece of advice, regarding configuration, contained within the Twelve Factor guidelines &ndash; you just have to turn to a different page.</p>
+<p>But, hang on, has something been overlooked?</p>
 
-<p> This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is to be versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source (Docker)[<a href="http://www.docker.com">http://www.docker.com</a>] based PaaS <a href="">Deis</a></p>
+<p>I&rsquo;d like to challenge Hashicorp&rsquo;s claim that this approach is compatible with Twelve Factor principles. My personal opinion &ndash; on which I&rsquo;m very happy to be challenged &ndash; is that there is a further critical piece of advice, regarding configuration, contained within the Twelve Factor guidelines &ndash; you just have to turn to a different page.</p>
+
+<p>This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is uniquely versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source (Docker)[<a href="http://www.docker.com">http://www.docker.com</a>] based PaaS <a href="http://www.deis.io">Deis</a> has the <a href="http://docs.deis.io/en/latest/reference/terms/release/#release">same approach</a>. I&rsquo;m leaving out other PaaS tech that also follows this model.</p>
+
+<p>It would be hard to deny that this approach makes deployments very easy to reason about. By bundling together code alongside environment specific config, you simplify release management and tracking. For example, if you need to rollback, you don&rsquo;t have to manage that as two separate actions &ndash; it&rsquo;s an atomic action and will return you to the last known uniquely versioned, operationally sound combination of code and config.</p>
+
+<p>So, whilst it&rsquo;s true that Twelve Factor does not dictate from <em>where</em> the environment should be populated, it&rsquo;s pretty clear that it does say <em>when</em> it should be. The source of environment configuration should be read <strong><em>when preparing a release</em></strong>, and that any change to config, just like with a change to code, <strong><em>results in a new release</em></strong>.</p>
+
+<p>Therefore, any approach to managing configuration, in a similar way to Hashicorp&rsquo;s advice, would not appear to be compatible with the Twelve Factor guidelines. They are promoting a model where the &lsquo;Build&rsquo; and &lsquo;Config&rsquo; are not atomically bundled as a &lsquo;Release&rsquo; and, as such, this model is violating a fundamental Twelve Factor principle &ndash; if your code and config is managed in separate lifecycles, it ain&rsquo;t Twelve Factor compatible.</p>
+
+<p>One could quite easily challenge the &lsquo;Build + Config = Release&rsquo; advice:</p>
+
+<p>1) It doesn&rsquo;t appear to leave any room for runtime config changes
+2) It&rsquo;s not completely clear how it would work with dynamic service discovery</p>
+
+<p>Sometimes, however, the advantages of predictable, easy to reason about deployments outweigh the benefits of such niceties</p>
+
+<p>I&rsquo;m not debating here what&rsquo;s the right or wrong way, I&rsquo;m just pointing out that the Twelve Factor advice is very clear about the meaning of a &lsquo;Release&rsquo;, and, therefore, any method that circumvents this, cannot claim to be compatible with the guidelines.</p>
+
+<p>Just saying.</p>
 ]]></content>
   </entry>
   

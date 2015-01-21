@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-01-21T19:58:03+00:00</updated>
+  <updated>2015-01-21T20:16:26+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -49,6 +49,10 @@
 <p>I&rsquo;m not debating here what&rsquo;s the right or wrong way, I&rsquo;m just pointing out that the Twelve Factor advice is very clear about the meaning of a &lsquo;Release&rsquo;, and, therefore, any method that circumvents this, cannot claim to be compatible with the guidelines.</p>
 
 <p>Just saying.</p>
+
+<h3>UPDATE 2015-01-21 20:10</h3>
+
+<p>Spring are also claiming that the <a href="http://projects.spring.io/spring-cloud/spring-cloud.html">Spring Cloud</a> approach to configuration is Twelve Factor compatible in this <a href="http://spring.io/blog/2015/01/13/configuring-it-all-out-or-12-factor-app-style-configuration-with-spring?utm_content=bufferfa5a5&amp;utm_medium=social&amp;utm_source=twitter.com&amp;utm_campaign=buffer">blog post</a>. I think this is making the same mistake as Hashicorp. If configuration is able to change independently from a release &ndash; as is described in this post &ndash; then it&rsquo;s not Twelve Factor compatible.</p>
 ]]></content>
   </entry>
   

@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: Eventsourcing - Responsibly Sourced</title>
+  <title>A confusing side to twelve factor app configuration - Responsibly Sourced</title>
   <meta name="author" content="Andrew Easter">
 
   
-  <meta name="description" content="Category: Eventsourcing">
+  <meta name="description" content="I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the Twelve Factor App &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://DrewEaster.github.ioblog/categories/eventsourcing/">
+  <link rel="canonical" href="http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -78,50 +78,97 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: Eventsourcing</h1>
+    
+      <h1 class="entry-title">A Confusing Side to Twelve Factor App Configuration</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T18:39:00+00:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the <a href="http://12factor.net">Twelve Factor App</a> guidelines. Here was a reliable set of principles &ndash; born out of real experience &ndash; that immediately hit home, providing sensible advice for overcoming the many pitfalls developers and operations teams have fought relentless battles with time and time again.</p>
 
-  
-  <h2>2013</h2>
+<p>One of the principles that I was especially able to connect with is the advice regarding from where applications should read their <a href="http://12factor.net/config">configuration</a>. Having regularly encountered config file hell over the years, this simple, platform agnostic approach to supplying config to an application makes a whole lot of sense. There have, though, been some misunderstandings with regard to this advice, <a href="http://blog.doismellburning.co.uk/2014/10/06/twelve-factor-config-misunderstandings-and-advice/">and this blog post</a> by Kristian Glass does a good job of highlighting one such misunderstanding &ndash; Twelve Factor does not say how the environment should be populated, only that an app should read from it.</p>
 
-<article>
-  
-<h1><a href="/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture FTW</a></h1>
-<time datetime="2013-12-02T21:41:00+00:00" pubdate><span class='month'>Dec</span> <span class='day'>02</span> <span class='year'>2013</span></time>
+<p>So, with a major misunderstanding out the way, we are left with a whole bunch of options as to how we populate the environment. Outside of the extreme abstraction of a PaaS environment like Heroku, something like Consul &ndash; the distributed key/value store &ndash; is one such solution. And in this <a href="https://hashicorp.com/blog/twelve-factor-consul.html">blog post</a> by <a href="https://hashicorp.com">Hashicorp</a>, that very solution is covered quite nicely.</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/architecture/'>Architecture</a>, <a class='category' href='/blog/categories/ddd/'>DDD</a>, <a class='category' href='/blog/categories/eda/'>EDA</a>, <a class='category' href='/blog/categories/eventsourcing/'>Eventsourcing</a>, <a class='category' href='/blog/categories/integration/'>Integration</a></span>
-</footer>
+<p>However, I&rsquo;d like to challenge Hashicorp&rsquo;s claim that this approach is compatible with Twelve Factor principles. My personal opinion &ndash; on which I&rsquo;m very happy to be challenged &ndash; is that there is a further, quite critical, piece of advice, regarding configuration, contained within the Twelve Factor guidelines &ndash; you just have to turn to a different page.</p>
 
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/">Akka, DDD, CQRS, Event Sourcing and Me</a></h1>
-<time datetime="2013-10-27T20:47:00+00:00" pubdate><span class='month'>Oct</span> <span class='day'>27</span> <span class='year'>2013</span></time>
-
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/akka/'>Akka</a>, <a class='category' href='/blog/categories/cqrs/'>CQRS</a>, <a class='category' href='/blog/categories/ddd/'>DDD</a>, <a class='category' href='/blog/categories/eventsourcing/'>Eventsourcing</a>, <a class='category' href='/blog/categories/scala/'>Scala</a></span>
-</footer>
-
-
-</article>
-
+<p> This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is to be versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source (Docker)[<a href="http://www.docker.com">http://www.docker.com</a>] based PaaS <a href="">Deis</a></p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Andrew Easter</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T18:39:00+00:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/" data-via="DrewEaster" data-counturl="http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/10/02/lessons-from-my-first-startup-failure/" title="Previous Post: Lessons from my first startup failure">&laquo; Lessons from my first startup failure</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -185,7 +232,10 @@
       var disqus_shortname = 'responsiblysourced';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/';
+        var disqus_url = 'http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

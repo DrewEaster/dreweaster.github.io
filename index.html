@@ -9,7 +9,7 @@
   <meta name="author" content="Andrew Easter">
 
   
-  <meta name="description" content="It&rsquo;s been a while since I last posted here, and good reason &ndash; I&rsquo;ve been trying to run a startup! As this is a technically focused &hellip;">
+  <meta name="description" content="I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the Twelve Factor App &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,52 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/">A Confusing Side to Twelve Factor App Configuration</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-21T18:39:00+00:00" pubdate data-updated="true">Jan 21<span>st</span>, 2015</time>
+        
+         | <a href="/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the <a href="http://12factor.net">Twelve Factor App</a> guidelines. Here was a reliable set of principles &ndash; born out of real experience &ndash; that immediately hit home, providing sensible advice for overcoming the many pitfalls developers and operations teams have fought relentless battles with time and time again.</p>
+
+<p>One of the principles that I was especially able to connect with is the advice regarding from where applications should read their <a href="http://12factor.net/config">configuration</a>. Having regularly encountered config file hell over the years, this simple, platform agnostic approach to supplying config to an application makes a whole lot of sense. There have, though, been some misunderstandings with regard to this advice, <a href="http://blog.doismellburning.co.uk/2014/10/06/twelve-factor-config-misunderstandings-and-advice/">and this blog post</a> by Kristian Glass does a good job of highlighting one such misunderstanding &ndash; Twelve Factor does not say how the environment should be populated, only that an app should read from it.</p>
+
+<p>So, with a major misunderstanding out the way, we are left with a whole bunch of options as to how we populate the environment. Outside of the extreme abstraction of a PaaS environment like Heroku, something like Consul &ndash; the distributed key/value store &ndash; is one such solution. And in this <a href="https://hashicorp.com/blog/twelve-factor-consul.html">blog post</a> by <a href="https://hashicorp.com">Hashicorp</a>, that very solution is covered quite nicely.</p>
+
+<p>However, I&rsquo;d like to challenge Hashicorp&rsquo;s claim that this approach is compatible with Twelve Factor principles. My personal opinion &ndash; on which I&rsquo;m very happy to be challenged &ndash; is that there is a further, quite critical, piece of advice, regarding configuration, contained within the Twelve Factor guidelines &ndash; you just have to turn to a different page.</p>
+
+<p> This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is to be versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source (Docker)[<a href="http://www.docker.com">http://www.docker.com</a>] based PaaS <a href="">Deis</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -961,53 +1007,9 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/">Play2 &amp; Scala – a New Beginning</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-10-14T11:49:00+01:00" pubdate data-updated="true">Oct 14<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/10/14/play2-and-scala-a-new-beginning/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
-
-<p>The murmurings for this new chapter began a few weeks ago when I enrolled on Martin Odersky’s “Functional Programming Principles in Scala” course – a fantastic FREE online course that runs for seven weeks, supported by <a href="http://www.epfl.ch/">EPFL</a> in Switzerland. For sure, I’ve been well aware of the rise of Scala within the industry but had never gotten round to really indulging in this exciting language (except, maybe, for getting through a few chapters of <a href="http://www.artima.com/shop/programming_in_scala_2ed/">Programming in Scala</a> on my Kindle). The same goes for the <a href="http://www.playframework.org/">Play! Framework</a>, something I’ve kept an eye on at arm’s length for quite a few years now.</p>
-
-<p>I’m now into the fourth week of Odersky’s course and, following completion of the first three challenging, but almost perversely absorbing, assignments, today I decided it was time to fire up my first Play2 application. Fortunately, I picked up a little freelance client project last week and it was a bit of a no brainer, given my newly mobilised appetite for all things Scala, to implement it using a technology (Play!) I really knew was overdue an evaluation.</p>
-
-<p>Just a few hours after downloading Play! 2.0.4, I have fallen hopelessly under it’s spell – I’ve been wandering around the house in what resembles a drunken stupor, close to screaming with excitement at what I’ve learned and been able to achieve in just one afternoon. My face aches, my jaw having been locked into a permanent smile. I know this is the future, though I feel a certain degree of sadness as I acknowledge my love affair with JEE, and it’s wonderful layer upon layer of abstraction, to be very nearly over (we need to stay friends, mind – my day job will see to that).</p>
-
-<p>The anticipation. The butterflies. So the journey begins.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1029,6 +1031,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/">A confusing side to twelve factor app configuration</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/10/02/lessons-from-my-first-startup-failure/">Lessons from my first startup failure</a>
       </li>
     
@@ -1044,10 +1050,6 @@
         <a href="/blog/2013/12/02/event-driven-architecture-ftw/">Event-driven Architecture FTW</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/">The fallacy of the omniscient domain model</a>
-      </li>
-    
   </ul>
 </section>
 <section>
@@ -1061,7 +1063,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - Andrew Easter -
+  Copyright &copy; 2015 - Andrew Easter -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

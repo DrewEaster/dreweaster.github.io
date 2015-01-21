@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-01-21T19:56:05+00:00</updated>
+  <updated>2015-01-21T19:58:03+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -38,8 +38,11 @@
 
 <p>One could quite easily challenge the &lsquo;Build + Config = Release&rsquo; advice:</p>
 
-<p>1) It doesn&rsquo;t appear to leave any room for runtime config changes
-2) It&rsquo;s not completely clear how it would work with dynamic service discovery</p>
+<ol>
+<li>It doesn&rsquo;t appear to leave any room for runtime config changes</li>
+<li>It&rsquo;s not completely clear how it would work with dynamic service discovery</li>
+</ol>
+
 
 <p>Sometimes, however, the advantages of predictable, easy to reason about deployments outweigh the benefits of such niceties</p>
 

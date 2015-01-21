@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-01-21T19:54:34+00:00</updated>
+  <updated>2015-01-21T19:55:20+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -28,7 +28,7 @@
 
 <p>I&rsquo;d like to challenge Hashicorp&rsquo;s claim that this approach is compatible with Twelve Factor principles. My personal opinion &ndash; on which I&rsquo;m very happy to be challenged &ndash; is that there is a further critical piece of advice, regarding configuration, contained within the Twelve Factor guidelines &ndash; you just have to turn to a different page.</p>
 
-<p>This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is uniquely versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source (Docker)[<a href="http://www.docker.com">http://www.docker.com</a>] based PaaS <a href="http://www.deis.io">Deis</a> has the <a href="http://docs.deis.io/en/latest/reference/terms/release/#release">same approach</a>. I&rsquo;m leaving out other PaaS tech that also follows this model.</p>
+<p>This additional piece of advice is contained with the section titled <a href="http://12factor.net/build-release-run">Build-Release-Run</a>. As far as I&rsquo;m concerned, the advice here is pretty crystal clear &ndash; a &lsquo;Release&rsquo; is a combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;. This <em>immutable</em> artifact is uniquely versioned and is deployed and rolled back as an atomic unit. This is how Heroku does it, and the open source <a href="http://www.docker.com">Docker</a> based PaaS <a href="http://www.deis.io">Deis</a> has the <a href="http://docs.deis.io/en/latest/reference/terms/release/#release">same approach</a>. I&rsquo;m leaving out other PaaS tech that also follows this model.</p>
 
 <p>It would be hard to deny that this approach makes deployments very easy to reason about. By bundling together code alongside environment specific config, you simplify release management and tracking. For example, if you need to rollback, you don&rsquo;t have to manage that as two separate actions &ndash; it&rsquo;s an atomic action and will return you to the last known uniquely versioned, operationally sound combination of code and config.</p>
 

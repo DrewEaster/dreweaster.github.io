@@ -24,7 +24,7 @@ Most people will tell you how great your idea is - it's human nature. The only w
 Identifying a problem is not enough
 -----------------------------------
 
-Whilst clearly important, it's not enough to just identify a problem. Yes, your business may well solve a real paint point in theory, but it still doesn't mean you can actually execute on it successfully. Commercial complexities (e.g. a deeply tangled industry) can still make even a good idea impossible to actually execute on, especially for a startup.
+Whilst clearly important, it's not enough to just identify a problem. Yes, your business may well solve a real pain point in theory, but it still doesn't mean you can actually execute on it successfully. Commercial complexities (e.g. a deeply tangled industry) can still make even a good idea impossible to actually execute on, especially for a startup.
 
 Be patient before diving in
 ---------------------------

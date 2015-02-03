@@ -36,7 +36,7 @@ The most damning thing is that we ultimately had to prise an apology out of the 
 
 What's pretty clear is that the hotel staff, as a team, had failed to prepare for the fallout. Let's be honest, it's not difficult to predict that refurbishment works will overrun - not only should the hotel manager have prepared a mitigation plan, but that plan should have been communicated clearly to _every_ member of staff.
 
-They should have been ready for every single pre-booked guest arrival and had devised an individual, tailored mitigation solution for each on. This plan could have been communicated to the guest(s), at best, prior to arrival, and, at worst, immediately on arrival at the reception desk.
+They should have been ready for every single pre-booked guest arrival and had devised an individual, tailored mitigation solution for each one. This plan could have been communicated to the guest(s), at best, prior to arrival, and, at worst, immediately on arrival at the reception desk.
 
 A great manager would have got every member of staff into a room, rallied the troops and ensured each team member was fully prepared to execute the mitigation plan. Unfortunately, the staff at our hotel seemed as bemused as we did, and this was extremely disappointing.
 

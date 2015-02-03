@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-02-03T22:43:49+01:00</updated>
+  <updated>2015-02-03T22:45:10+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -82,15 +82,6 @@
 <p>As stated at the beginning of this post, customer experience is important for <em>every</em> business &ndash; little or large, technical or non-technical.</p>
 
 <p>Great customer experience makes the difference, so make it your difference.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Applying the builder pattern in Scala]]></title>
-    <link href="http://DrewEaster.github.io/blog/2015/01/27/applying-the-builder-pattern-in-scala/"/>
-    <updated>2015-01-27T22:05:00+01:00</updated>
-    <id>http://DrewEaster.github.io/blog/2015/01/27/applying-the-builder-pattern-in-scala</id>
-    <content type="html"><![CDATA[
 ]]></content>
   </entry>
   

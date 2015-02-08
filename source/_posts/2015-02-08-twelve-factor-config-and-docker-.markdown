@@ -52,14 +52,16 @@ I propose the idea of taking our base 'Build' image and creating a uniquely vers
 
 Let's look at an example Dockerfile to achieve this:
 
-`FROM coolcompany/coolapp:1.0.0
-ENV FOO bar`
+```
+FROM coolcompany/coolapp:1.0.0
+ENV FOO bar
+```
 
 We can then use this Dockerfile to build the 'Release' image, giving it a unique version at the same time, e.g. `coolcompany/coolapp:1.0.0-staging-v11`.
 
 I've made up a convention here `{build_version}-{environment_name}-{release_number}` for tagging releases. Including the environment name in the tag might be a nice way of ensuring it's clear which environment the container is tied to.
 
-So, our delivery pipeline continues to produce an environment agnostic container 'Build' image, but, just at the point of deployment to our chosen environment, we _do_ create a new environment specific image and use this as our 'Release'. Then, the 'Run' phase need only be given the 'Release' image version in order to execute the application.
+So, our delivery pipeline continues to produce an environment agnostic container 'Build' image, but, just at the point of deployment to our chosen environment, we create a new environment specific image and use this as our 'Release'. Then, the 'Run' phase need only be given the 'Release' image version in order to execute the application.
 
 This model sees 'Release' packages created on demand - i.e. a 'Release' package (Docker image) is create _just in time_ at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.
 

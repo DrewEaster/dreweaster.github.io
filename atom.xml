@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-02-08T11:43:13+00:00</updated>
+  <updated>2015-02-08T11:44:39+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -76,7 +76,7 @@
 
 <p>This model sees &lsquo;Release&rsquo; packages created on demand &ndash; i.e. a &lsquo;Release&rsquo; package (Docker image) is create <em>just in time</em> at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.</p>
 
-<h1>The right way?</h1>
+<h2>The right way?</h2>
 
 <p>I&rsquo;ve read enough so called best practices to expect this approach to anger some Docker/containerization purists. However, I genuinely see this as being a reasonable way to implement the Twelve-factor guidelines using Docker.</p>
 

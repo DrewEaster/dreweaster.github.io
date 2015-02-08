@@ -3,7 +3,7 @@ layout: post
 title: "Twelve-factor config and Docker"
 date: 2015-02-08 08:03
 comments: true
-categories:
+categories: [Docker, Twelve-factor, Configuration]
 ---
 Config confusion
 ----------------

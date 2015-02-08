@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-02-03T22:50:21+01:00</updated>
+  <updated>2015-02-08T11:34:40+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -14,9 +14,83 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Twelve-factor config and Docker]]></title>
+    <link href="http://DrewEaster.github.io/blog/2015/02/08/twelve-factor-config-and-docker-/"/>
+    <updated>2015-02-08T08:03:00+00:00</updated>
+    <id>http://DrewEaster.github.io/blog/2015/02/08/twelve-factor-config-and-docker-</id>
+    <content type="html"><![CDATA[<h1>Config confusion</h1>
+
+<p>I recently wrote about what I see to be confusion over the way the <a href="http://www.12factor.net">Twelve-factor app</a> guidelines are interpreted with regard to app config. You can read that post <a href="http://www.dreweaster.com/blog/2015/01/21/a-confusing-side-to-Twelve-factor-app-configuration/">here</a>.</p>
+
+<p>To summarise my argument, I think people tend to focus solely on the explicit guidelines in the <a href="http://12factor.net/config">Config</a> section, and overlook the additional advice &ndash; specific to config &ndash; given in the <a href="http://12factor.net/build-release-run">Build, release, run</a> section. The former simply speaks about reading app config from the environment, the latter clearly states that a software &lsquo;Release&rsquo; is a <em>uniquely versioned</em> combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;.</p>
+
+<p>Suffice to say, I&rsquo;m quite surprised at the extent to which people manage to overlook the <a href="http://12factor.net/build-release-run">Build, release, run</a> section when discussing Twelve-factor config. It offers extremely specific advice with regard to managing <em>immutable</em> release packages, and I don&rsquo;t believe it&rsquo;s correct to claim you&rsquo;re doing Twelve-factor style config if you&rsquo;re not also following the <a href="http://12factor.net/build-release-run">Build, release, run</a> guidelines.</p>
+
+<p>In this post, I want to address the implications of this view with regard to shipping applications in Docker containers. Once again, I see some conflict in what Twelve-factor has to say about config and  perceived best practices for Docker.</p>
+
+<h1>The Docker way</h1>
+
+<p>I&rsquo;ve digested a whole bunch of various opinions and best practices with regard to Docker, and a fairly consistent view is that containers should remain environment agnostic &ndash; i.e. the same container you generate at &lsquo;Build&rsquo; time should be deployable to <em>any</em> environment.</p>
+
+<p>I get this, and I&rsquo;m in total agreement. There&rsquo;s certainly agreement here with Twelve-factor, at least in terms of what constitues a &lsquo;Build&rsquo;.  So, how would we supposedly do Twelve-factor config with this model? It appears to be quite simple as Docker lets us pass in environment variables when running a container, e.g.</p>
+
+<p><code>docker run -e FOO=bar coolcompany/coolapp:1.0.0</code></p>
+
+<p>This is saying, run <code>coolapp</code> with tag <code>1.0.0</code> passing in <code>bar</code> as the value for environment variable <code>FOO</code>. The Docker tag, in this fictitious example, is meant to represent the &lsquo;Build&rsquo; version of the app, and would have been generated during the build phase in the delivery pipeline.</p>
+
+<p>This approach is absolutely consistent with the Twelve-factor <a href="http://12factor.net/config">Config</a> section &ndash; our application (encapsulated in the container) will read its configuration from the environment variable(s) provided. And, of course, we haven&rsquo;t tied the container image to a specific environment &ndash; this container looks very much like what Twelve-factor refers to as a &lsquo;Build&rsquo;.</p>
+
+<p>Hold on, though. Whilst we&rsquo;ve satisfied the <a href="http://12factor.net/config">Config</a> section, we&rsquo;ve only partly satisfied the <a href="http://12factor.net/build-release-run">Build, release, run</a> section. In fact, I&rsquo;d go as far as saying that this is violating the <a href="http://12factor.net/build-release-run">Build, release, run</a> guidelines.</p>
+
+<p>Let&rsquo;s take some quotes directly from the Twelve-factor guidelines:</p>
+
+<blockquote><p>The release stage takes the build produced by the build stage and combines it with the deploy’s current config. The resulting release contains both the build and the config and is ready for immediate execution in the execution environment.</p></blockquote>
+
+<p>and:</p>
+
+<blockquote><p>Every release should always have a unique release ID, such as a timestamp of the release (such as 2011-04-06-20:32:17) or an incrementing number (such as v100). Releases are an append-only ledger and a release cannot be mutated once it is created. Any change must create a new release.</p></blockquote>
+
+<p>In our example above, I think it&rsquo;s fair to say that this advice has been circumnavigated. We&rsquo;ve taken our &lsquo;Build&rsquo; and jumped straight to &lsquo;Run&rsquo;, altogether ignoring what Twelve-factor refers to as a &lsquo;Release&rsquo;. We&rsquo;ve <em>not</em> created a uniquely versioned, immutable release package and we&rsquo;ve burdened the &lsquo;Run&rsquo; phase with the additional responsibility of having to pass environment variables to the container. The &lsquo;Run&rsquo; phase has become more complicated than it should be.</p>
+
+<p>This approach has maintained a distinct separation between code and config, whereas Twelve-factor very explicitly specifies that a &lsquo;Release&rsquo; <em>is</em> a combination of code and config. The Twelve-factor approach allows the &lsquo;Run&rsquo; phase to be dumb &ndash; it just launches whatever package you give it, needing no knowledge of application specific configuration. And, it naturally follows that rollbacks are a simple case of running the previously versioned release, with no need to worry about what the configuration for that version should be.</p>
+
+<h1>An alternative approach</h1>
+
+<p>This is where this post is bound to get murky and upset a few people. I&rsquo;m going to be heretical and suggest a model whereby we do create environment specific Docker containers. I can hear the cries of &ldquo;How very dare he?!&rdquo;</p>
+
+<p>I propose the idea of taking our base &lsquo;Build&rsquo; image and creating a uniquely versioned &lsquo;Release&rsquo; image as a thin layer on top of it &ndash; oh the joys of image layering. This new image <em>does</em> embed the environment variables &ndash; specific to a chosen environment &ndash; within itself, rather than requiring they be passed to <code>docker run</code> on launch.</p>
+
+<p>Let&rsquo;s look at an example Dockerfile to achieve this:</p>
+
+<p><code>FROM coolcompany/coolapp:1.0.0
+ENV FOO bar</code></p>
+
+<p>We can then use this Dockerfile to build the &lsquo;Release&rsquo; image, giving it a unique version at the same time, e.g. <code>coolcompany/coolapp:1.0.0-staging-v11</code>.</p>
+
+<p>I&rsquo;ve made up a convention here <code>{build_version}-{environment_name}-{release_number}</code> for tagging releases. Including the environment name in the tag might be a nice way of ensuring it&rsquo;s clear which environment the container is tied to.</p>
+
+<p>So, our delivery pipeline continues to produce an environment agnostic container &lsquo;Build&rsquo; image, but, just at the point of deployment to our chosen environment, we <em>do</em> create a new environment specific image and use this as our &lsquo;Release&rsquo;. Then, the &lsquo;Run&rsquo; phase need only be given the &lsquo;Release&rsquo; image version in order to execute the application.</p>
+
+<p>This model sees &lsquo;Release&rsquo; packages created on demand &ndash; i.e. a &lsquo;Release&rsquo; package (Docker image) is create <em>just in time</em> at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.</p>
+
+<h1>The right way?</h1>
+
+<p>I&rsquo;ve read enough so called best practices to expect this approach to anger some Docker/containerization purists. However, I genuinely see this as being a reasonable way to implement the Twelve-factor guidelines using Docker.</p>
+
+<p>If not this approach, then what? For me, one reasonable way to challenge this model would be to challenge the whole Twelve-factor concept of <a href="http://12factor.net/build-release-run">Build, release, run</a>. If you disagree with the Twelve-factor concept of a &lsquo;Release&rsquo;, then by all means disagree with the content of this post!</p>
+
+<p>Just like with my <a href="http://www.dreweaster.com/blog/2015/01/21/a-confusing-side-to-Twelve-factor-app-configuration/">related post</a> &ndash; and despite being sympathetic to the <a href="http://12factor.net/build-release-run">Build, release, run</a> advice &ndash; I&rsquo;m not necessarily arguing right or wrong here. It&rsquo;s just a case of pointing out what would constitute a pure implementation of the Twelve-factor guidelines on top of Docker.</p>
+
+<p>Remember, the Twelve-factor guidelines were essentially invented by the Heroku gurus, and there are other PaaS technologies that also follow the same principles. It&rsquo;s just a specific way of tackling release management, and, whilst it may not be the <em>right</em> way of using Docker, I don&rsquo;t think it would be fair to say it&rsquo;s <em>wrong</em> either.</p>
+
+<p>What do you think?</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Customer experience makes the difference]]></title>
     <link href="http://DrewEaster.github.io/blog/2015/02/03/customer-experience-makes-the-difference/"/>
-    <updated>2015-02-03T09:56:00+01:00</updated>
+    <updated>2015-02-03T09:56:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2015/02/03/customer-experience-makes-the-difference</id>
     <content type="html"><![CDATA[<p>In this post, I&rsquo;m going to dip my toes into the world of customer experience (CX). This isn&rsquo;t a subject I&rsquo;ve written about before, but a recent sub-optimal hotel experience during a trip to Belgium has prompted this analysis.</p>
 
@@ -88,7 +162,7 @@
   <entry>
     <title type="html"><![CDATA[A confusing side to twelve factor app configuration]]></title>
     <link href="http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration/"/>
-    <updated>2015-01-21T18:39:00+01:00</updated>
+    <updated>2015-01-21T18:39:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2015/01/21/a-confusing-side-to-twelve-factor-app-configuration</id>
     <content type="html"><![CDATA[<p>I&rsquo;m sure I&rsquo;m not the only one who breathed a sign of relief when the clever brains behind Heroku published the <a href="http://12factor.net">Twelve Factor App</a> guidelines. Here was a reliable set of principles &ndash; born out of real life experience &ndash; that immediately hit home, providing sensible advice for overcoming the many pitfalls developers and operations teams have fought relentless battles with time and time again.</p>
 
@@ -131,7 +205,7 @@
   <entry>
     <title type="html"><![CDATA[Lessons from my first startup failure]]></title>
     <link href="http://DrewEaster.github.io/blog/2014/10/02/lessons-from-my-first-startup-failure/"/>
-    <updated>2014-10-02T15:13:00+02:00</updated>
+    <updated>2014-10-02T15:13:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2014/10/02/lessons-from-my-first-startup-failure</id>
     <content type="html"><![CDATA[<p>It&rsquo;s been a while since I last posted here, and good reason &ndash; I&rsquo;ve been trying to run a startup! As this is a technically focused blog &ndash; and given my startup experiences were mainly commercially focused &ndash; I didn&rsquo;t have all that much to say here. But, now I&rsquo;ve experienced my first startup failure, I thought I&rsquo;d write about it here (even though it&rsquo;s not really technical content).</p>
 
@@ -186,7 +260,7 @@
   <entry>
     <title type="html"><![CDATA[What a storming idea]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea/"/>
-    <updated>2013-12-07T09:46:00+01:00</updated>
+    <updated>2013-12-07T09:46:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/12/07/what-a-storming-idea</id>
     <content type="html"><![CDATA[<p>Firstly, an important disclosure &ndash; having only just stumbled across the practice of <a href="http://ziobrando.blogspot.be/2013/11/introducing-event-storming.html">Event Storming</a>, I’ve not yet had the opportunity to experiment with it myself. However, sometimes a concept/practice makes such immediate sense in one’s mind, that one feels compelled to talk about it!</p>
 
@@ -219,7 +293,7 @@
   <entry>
     <title type="html"><![CDATA[The Silicon Valley Mindset]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/12/04/the-silicon-valley-mindset/"/>
-    <updated>2013-12-04T22:01:00+01:00</updated>
+    <updated>2013-12-04T22:01:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/12/04/the-silicon-valley-mindset</id>
     <content type="html"><![CDATA[<p>As I&rsquo;m currently on a temporary work assignment in San Jose, I recently wrote an article for <a href="http://thecroydoncitizen.com/">The Croydon Citizen</a> about my experiences in Silicon Valley. It&rsquo;s great to have become part of the <a href="http://croydontechcity.com/">Croydon Tech City</a> movement, and so it was nice to contribute an article in support of the great work being done to promote Croydon as a new hub for tech startups in the UK.</p>
 
@@ -232,7 +306,7 @@
   <entry>
     <title type="html"><![CDATA[Event-driven Architecture FTW]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/12/02/event-driven-architecture-ftw/"/>
-    <updated>2013-12-02T21:41:00+01:00</updated>
+    <updated>2013-12-02T21:41:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/12/02/event-driven-architecture-ftw</id>
     <content type="html"><![CDATA[<h2>A quick primer on EDA</h2>
 
@@ -330,7 +404,7 @@
   <entry>
     <title type="html"><![CDATA[The fallacy of the omniscient domain model]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model/"/>
-    <updated>2013-11-17T17:20:00+01:00</updated>
+    <updated>2013-11-17T17:20:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/11/17/the-fallacy-of-the-omniscient-domain-model</id>
     <content type="html"><![CDATA[<p>Complexity. As software engineers, it&rsquo;s pretty hard to make it beyond lunch without someone mentioning it. But, what is it exactly? Most of us probably think we sussed this out a long time ago &ndash; hell, we&rsquo;re probably preaching the KISS and DRY principles on a daily basis. However, complexity in software is a multi-faceted beast and, with that in mind, taking the time to reflect on your own view of complexity, you may reveal a bunch of defective preconceptions.</p>
 
@@ -359,7 +433,7 @@
   <entry>
     <title type="html"><![CDATA[Akka, DDD, CQRS, Event Sourcing and Me]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me/"/>
-    <updated>2013-10-27T20:47:00+01:00</updated>
+    <updated>2013-10-27T20:47:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/10/27/Akka-DDD-CQRS-Event-Sourcing-And-Me</id>
     <content type="html"><![CDATA[<h2>Introduction</h2>
 
@@ -402,7 +476,7 @@
   <entry>
     <title type="html"><![CDATA[Access logs in Play! using RequestHeader tags]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/"/>
-    <updated>2013-07-14T13:30:00+02:00</updated>
+    <updated>2013-07-14T13:30:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags</id>
     <content type="html"><![CDATA[<h2>Log files as event streams</h2>
 
@@ -524,7 +598,7 @@
   <entry>
     <title type="html"><![CDATA[Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/"/>
-    <updated>2013-07-08T12:25:00+02:00</updated>
+    <updated>2013-07-08T12:25:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch</id>
     <content type="html"><![CDATA[<h2>Introduction</h2>
 
@@ -730,7 +804,7 @@
   <entry>
     <title type="html"><![CDATA[Taking a walk on the wild side]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side/"/>
-    <updated>2013-03-16T12:08:00+01:00</updated>
+    <updated>2013-03-16T12:08:00+00:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/03/16/taking-a-walk-on-the-wild-side</id>
     <content type="html"><![CDATA[<p>Having spent nearly 10 years doing my best to avoid wrestling with the client-side web, the necessity to better prepare myself for a new future (think tech startup) means I&rsquo;ve begun some serious dabbling on &ldquo;the wild side&rdquo;.</p>
 
@@ -751,7 +825,7 @@
   <entry>
     <title type="html"><![CDATA[Play2 &amp; Scala – A new beginning]]></title>
     <link href="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/"/>
-    <updated>2012-10-14T11:49:00+02:00</updated>
+    <updated>2012-10-14T11:49:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning</id>
     <content type="html"><![CDATA[<p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
 

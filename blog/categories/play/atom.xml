@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Play | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/play/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2015-02-03T22:50:21+01:00</updated>
+  <updated>2015-02-08T11:34:40+00:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Access logs in Play! using RequestHeader tags]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/"/>
-    <updated>2013-07-14T13:30:00+02:00</updated>
+    <updated>2013-07-14T13:30:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/14/access-logs-in-play-using-requestheader-tags</id>
     <content type="html"><![CDATA[<h2>Log files as event streams</h2>
 
@@ -147,7 +147,7 @@
   <entry>
     <title type="html"><![CDATA[Reactive, real-time log search with Play, Akka, AngularJS and Elasticsearch]]></title>
     <link href="http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch/"/>
-    <updated>2013-07-08T12:25:00+02:00</updated>
+    <updated>2013-07-08T12:25:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2013/07/08/reactive-real-time-log-search-with-play-akka-angularjs-and-elasticsearch</id>
     <content type="html"><![CDATA[<h2>Introduction</h2>
 
@@ -373,7 +373,7 @@
   <entry>
     <title type="html"><![CDATA[Play2 &amp; Scala – A new beginning]]></title>
     <link href="http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning/"/>
-    <updated>2012-10-14T11:49:00+02:00</updated>
+    <updated>2012-10-14T11:49:00+01:00</updated>
     <id>http://DrewEaster.github.io/blog/2012/10/14/play2-and-scala-a-new-beginning</id>
     <content type="html"><![CDATA[<p>Today marks the beginning of a new chapter in my software engineering life. I’ve been an enterprise Java dev for so many years that it’s boring to even talk about it. Don’ t get me wrong, I love my job (if you can even call it a job) but sometimes one needs a spark, a chance to re-experience a honeymoon period that extends beyond love and into a kind of uncontrollable, rapturous madness.</p>
 

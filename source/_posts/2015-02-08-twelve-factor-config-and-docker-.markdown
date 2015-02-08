@@ -6,7 +6,7 @@ comments: true
 categories:
 ---
 Config confusion
-================
+----------------
 
 I recently wrote about what I see to be confusion over the way the [Twelve-factor app](http://www.12factor.net) guidelines are interpreted with regard to app config. You can read that post [here](http://www.dreweaster.com/blog/2015/01/21/a-confusing-side-to-Twelve-factor-app-configuration/).
 
@@ -17,7 +17,7 @@ Suffice to say, I'm quite surprised at the extent to which people manage to over
 In this post, I want to address the implications of this view with regard to shipping applications in Docker containers. Once again, I see some conflict in what Twelve-factor has to say about config and  perceived best practices for Docker.
 
 The Docker way
-==============
+--------------
 
 I've digested a whole bunch of various opinions and best practices with regard to Docker, and a fairly consistent view is that containers should remain environment agnostic - i.e. the same container you generate at 'Build' time should be deployable to _any_ environment.
 
@@ -44,7 +44,7 @@ In our example above, I think it's fair to say that this advice has been circumn
 This approach has maintained a distinct separation between code and config, whereas Twelve-factor very explicitly specifies that a 'Release' _is_ a combination of code and config. The Twelve-factor approach allows the 'Run' phase to be dumb - it just launches whatever package you give it, needing no knowledge of application specific configuration. And, it naturally follows that rollbacks are a simple case of running the previously versioned release, with no need to worry about what the configuration for that version should be.
 
 An alternative approach
-=======================
+-----------------------
 
 This is where this post is bound to get murky and upset a few people. I'm going to be heretical and suggest a model whereby we do create environment specific Docker containers. I can hear the cries of "How very dare he?!"
 

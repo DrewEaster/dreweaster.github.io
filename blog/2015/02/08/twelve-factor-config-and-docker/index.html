@@ -163,7 +163,7 @@
 
 <p>So, our delivery pipeline continues to produce an environment agnostic container &lsquo;Build&rsquo; image, but, just at the point of deployment to our chosen environment, we create a new environment specific image and use this as our &lsquo;Release&rsquo;. Then, the &lsquo;Run&rsquo; phase need only be given the &lsquo;Release&rsquo; image version in order to execute the application.</p>
 
-<p>This model sees &lsquo;Release&rsquo; packages created on demand &ndash; i.e. a &lsquo;Release&rsquo; package (Docker image) is create <em>just in time</em> at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.</p>
+<p>This model sees &lsquo;Release&rsquo; packages created on demand &ndash; i.e. a &lsquo;Release&rsquo; package (Docker image) is created <em>just in time</em> at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.</p>
 
 <h2>The right way?</h2>
 

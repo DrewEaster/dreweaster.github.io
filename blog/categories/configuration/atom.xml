@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Configuration | Responsibly Sourced]]></title>
+  <link href="http://DrewEaster.github.io/blog/categories/configuration/atom.xml" rel="self"/>
+  <link href="http://DrewEaster.github.io/"/>
+  <updated>2015-02-08T11:47:12+00:00</updated>
+  <id>http://DrewEaster.github.io/</id>
+  <author>
+    <name><![CDATA[Andrew Easter]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Twelve-factor config and Docker]]></title>
+    <link href="http://DrewEaster.github.io/blog/2015/02/08/twelve-factor-config-and-docker/"/>
+    <updated>2015-02-08T08:03:00+00:00</updated>
+    <id>http://DrewEaster.github.io/blog/2015/02/08/twelve-factor-config-and-docker</id>
+    <content type="html"><![CDATA[<h2>Config confusion</h2>
+
+<p>I recently wrote about what I see to be confusion over the way the <a href="http://www.12factor.net">Twelve-factor app</a> guidelines are interpreted with regard to app config. You can read that post <a href="http://www.dreweaster.com/blog/2015/01/21/a-confusing-side-to-Twelve-factor-app-configuration/">here</a>.</p>
+
+<p>To summarise my argument, I think people tend to focus solely on the explicit guidelines in the <a href="http://12factor.net/config">Config</a> section, and overlook the additional advice &ndash; specific to config &ndash; given in the <a href="http://12factor.net/build-release-run">Build, release, run</a> section. The former simply speaks about reading app config from the environment, the latter clearly states that a software &lsquo;Release&rsquo; is a <em>uniquely versioned</em> combination of a &lsquo;Build&rsquo; <em>and</em> &lsquo;Config&rsquo;.</p>
+
+<p>Suffice to say, I&rsquo;m quite surprised at the extent to which people manage to overlook the <a href="http://12factor.net/build-release-run">Build, release, run</a> section when discussing Twelve-factor config. It offers extremely specific advice with regard to managing <em>immutable</em> release packages, and I don&rsquo;t believe it&rsquo;s correct to claim you&rsquo;re doing Twelve-factor style config if you&rsquo;re not also following the <a href="http://12factor.net/build-release-run">Build, release, run</a> guidelines.</p>
+
+<p>In this post, I want to address the implications of this view with regard to shipping applications in Docker containers. Once again, I see some conflict in what Twelve-factor has to say about config and  perceived best practices for Docker.</p>
+
+<h2>The Docker way</h2>
+
+<p>I&rsquo;ve digested a whole bunch of various opinions and best practices with regard to Docker, and a fairly consistent view is that containers should remain environment agnostic &ndash; i.e. the same container you generate at &lsquo;Build&rsquo; time should be deployable to <em>any</em> environment.</p>
+
+<p>I get this, and I&rsquo;m in total agreement. There&rsquo;s certainly agreement here with Twelve-factor, at least in terms of what constitues a &lsquo;Build&rsquo;.  So, how would we supposedly do Twelve-factor config with this model? It appears to be quite simple as Docker lets us pass in environment variables when running a container, e.g.</p>
+
+<p><code>docker run -e FOO=bar coolcompany/coolapp:1.0.0</code></p>
+
+<p>This is saying, run <code>coolapp</code> with tag <code>1.0.0</code> passing in <code>bar</code> as the value for environment variable <code>FOO</code>. The Docker tag, in this fictitious example, is meant to represent the &lsquo;Build&rsquo; version of the app, and would have been generated during the build phase in the delivery pipeline.</p>
+
+<p>This approach is absolutely consistent with the Twelve-factor <a href="http://12factor.net/config">Config</a> section &ndash; our application (encapsulated in the container) will read its configuration from the environment variable(s) provided. And, of course, we haven&rsquo;t tied the container image to a specific environment &ndash; this container looks very much like what Twelve-factor refers to as a &lsquo;Build&rsquo;.</p>
+
+<p>Hold on, though. Whilst we&rsquo;ve satisfied the <a href="http://12factor.net/config">Config</a> section, we&rsquo;ve only partly satisfied the <a href="http://12factor.net/build-release-run">Build, release, run</a> section. In fact, I&rsquo;d go as far as saying that this is violating the <a href="http://12factor.net/build-release-run">Build, release, run</a> guidelines.</p>
+
+<p>Let&rsquo;s take some quotes directly from the Twelve-factor guidelines:</p>
+
+<blockquote><p>The release stage takes the build produced by the build stage and combines it with the deploy’s current config. The resulting release contains both the build and the config and is ready for immediate execution in the execution environment.</p></blockquote>
+
+<p>and:</p>
+
+<blockquote><p>Every release should always have a unique release ID, such as a timestamp of the release (such as 2011-04-06-20:32:17) or an incrementing number (such as v100). Releases are an append-only ledger and a release cannot be mutated once it is created. Any change must create a new release.</p></blockquote>
+
+<p>In our example above, I think it&rsquo;s fair to say that this advice has been circumnavigated. We&rsquo;ve taken our &lsquo;Build&rsquo; and jumped straight to &lsquo;Run&rsquo;, altogether ignoring what Twelve-factor refers to as a &lsquo;Release&rsquo;. We&rsquo;ve <em>not</em> created a uniquely versioned, immutable release package and we&rsquo;ve burdened the &lsquo;Run&rsquo; phase with the additional responsibility of having to pass environment variables to the container. The &lsquo;Run&rsquo; phase has become more complicated than it should be.</p>
+
+<p>This approach has maintained a distinct separation between code and config, whereas Twelve-factor very explicitly specifies that a &lsquo;Release&rsquo; <em>is</em> a combination of code and config. The Twelve-factor approach allows the &lsquo;Run&rsquo; phase to be dumb &ndash; it just launches whatever package you give it, needing no knowledge of application specific configuration. And, it naturally follows that rollbacks are a simple case of running the previously versioned release, with no need to worry about what the configuration for that version should be.</p>
+
+<h2>An alternative approach</h2>
+
+<p>This is where this post is bound to get murky and upset a few people. I&rsquo;m going to be heretical and suggest a model whereby we do create environment specific Docker containers. I can hear the cries of &ldquo;How very dare he?!&rdquo;</p>
+
+<p>I propose the idea of taking our base &lsquo;Build&rsquo; image and creating a uniquely versioned &lsquo;Release&rsquo; image as a thin layer on top of it &ndash; oh the joys of image layering. This new image <em>does</em> embed the environment variables &ndash; specific to a chosen environment &ndash; within itself, rather than requiring they be passed to <code>docker run</code> on launch.</p>
+
+<p>Let&rsquo;s look at an example Dockerfile to achieve this:</p>
+
+<p><code>
+FROM coolcompany/coolapp:1.0.0
+ENV FOO bar
+</code></p>
+
+<p>We can then use this Dockerfile to build the &lsquo;Release&rsquo; image, giving it a unique version at the same time, e.g. <code>coolcompany/coolapp:1.0.0-staging-v11</code>.</p>
+
+<p>I&rsquo;ve made up a convention here <code>{build_version}-{environment_name}-{release_number}</code> for tagging releases. Including the environment name in the tag might be a nice way of ensuring it&rsquo;s clear which environment the container is tied to.</p>
+
+<p>So, our delivery pipeline continues to produce an environment agnostic container &lsquo;Build&rsquo; image, but, just at the point of deployment to our chosen environment, we create a new environment specific image and use this as our &lsquo;Release&rsquo;. Then, the &lsquo;Run&rsquo; phase need only be given the &lsquo;Release&rsquo; image version in order to execute the application.</p>
+
+<p>This model sees &lsquo;Release&rsquo; packages created on demand &ndash; i.e. a &lsquo;Release&rsquo; package (Docker image) is create <em>just in time</em> at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.</p>
+
+<h2>The right way?</h2>
+
+<p>I&rsquo;ve read enough so called best practices to expect this approach to anger some Docker/containerization purists. However, I genuinely see this as being a reasonable way to implement the Twelve-factor guidelines using Docker.</p>
+
+<p>If not this approach, then what? For me, one reasonable way to challenge this model would be to challenge the whole Twelve-factor concept of <a href="http://12factor.net/build-release-run">Build, release, run</a>. If you disagree with the Twelve-factor concept of a &lsquo;Release&rsquo;, then by all means disagree with the content of this post!</p>
+
+<p>Just like with my <a href="http://www.dreweaster.com/blog/2015/01/21/a-confusing-side-to-Twelve-factor-app-configuration/">related post</a> &ndash; and despite being sympathetic to the <a href="http://12factor.net/build-release-run">Build, release, run</a> advice &ndash; I&rsquo;m not necessarily arguing right or wrong here. It&rsquo;s just a case of pointing out what would constitute a pure implementation of the Twelve-factor guidelines on top of Docker.</p>
+
+<p>Remember, the Twelve-factor guidelines were essentially invented by the Heroku gurus, and there are other PaaS technologies that also follow the same principles. It&rsquo;s just a specific way of tackling release management, and, whilst it may not be the <em>right</em> way of using Docker, I don&rsquo;t think it would be fair to say it&rsquo;s <em>wrong</em> either.</p>
+
+<p>What do you think?</p>
+]]></content>
+  </entry>
+  
+</feed>

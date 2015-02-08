@@ -66,7 +66,7 @@ So, our delivery pipeline continues to produce an environment agnostic container
 This model sees 'Release' packages created on demand - i.e. a 'Release' package (Docker image) is create _just in time_ at the point of deployment to a specified environment. From where environment variables are actually sourced and added to the Dockerfile, is beyond the realms of this post.
 
 The right way?
-==============
+--------------
 
 I've read enough so called best practices to expect this approach to anger some Docker/containerization purists. However, I genuinely see this as being a reasonable way to implement the Twelve-factor guidelines using Docker.
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Andrew Easter">
 
   
-  <meta name="description" content="Config confusion I recently wrote about what I see to be confusion over the way the Twelve-factor app guidelines are interpreted with regard to app &hellip;">
+  <meta name="description" content="This is the first post in a two part series looking at the topic of microservice integration. In this first installment, I&rsquo;ll be focusing &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -79,6 +79,118 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/">The Art of Microservices Integration Using Service Choreography</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-05-08T22:10:00+01:00" pubdate data-updated="true">May 8<span>th</span>, 2016</time>
+        
+         | <a href="/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This is the first post in a two part series looking at the topic of microservice integration. In this first installment, I&rsquo;ll be focusing mainly on the theory side of event-driven service choreography. In the second part, I&rsquo;ll cover practical application of the techniques discussed in this first post, looking at the pros and cons of specific implementation technologies. So, let&rsquo;s get on with part one!</p>
+
+<h2>Looking back</h2>
+
+<p>One of the biggest shortcomings of traditional SOA is/was the tendency to break up a highly-coupled monolith into a series of smaller services with the same level of coupling that was previously internal to the monolith. The likely result being a distributed monolith with all the same problems you had before, but now with an additional operational burden &ndash; you end up in a worse position than if you&rsquo;d just stuck with the monolith!</p>
+
+<p>It&rsquo;s this learning that I believe was the main catalyst for the development of the microservices architecture pattern (SOA 2.0?). In hindsight it seems pretty obvious; if you can&rsquo;t run a service in isolation, with significant levels of autonomy, it&rsquo;s pretty hard to justify why a piece of functionality is better in a separate service than simply internal to a monolith. It&rsquo;s not like there aren&rsquo;t some potentially good reasons why people would choose to do old style SOA, it&rsquo;s just you find those good reasons are outweighed by the negatives most of the time.</p>
+
+<h2>Looking forward</h2>
+
+<p>So, enter the world of microservices architecture, and the promise of isolation, autonomy, single-responsibility, encapsulated persistence etc. But, what exactly allows one to achieve such isolation and autonomy?</p>
+
+<p>In this post, I&rsquo;m going to focus on how getting service integration right is a fundamental part of what enables services to be isolated, and act autonomously. I believe having a thorough understanding of the principles of good service integration can train your mind into grasping the importance of good service separation. As a little bonus, I&rsquo;ll close this post by looking at some considerations for good service separation.</p>
+
+<h2>Service orchestration vs service choreography</h2>
+
+<p>In a classic distributed monolith scenario as described above, the prevalent integration technique is likely to involve service <em>orchestration</em>. This is where backend services typically have a high-level of synchronous coupling &ndash; i.e. a service is reliant on other services to be operational and working, within a single request/response cycle, in order for it to carry out its own responsibilities. Such real-time dependencies prevent a service from acting autonomously &ndash; any failures in its dependencies will inevitably cascade, preventing the service from fulfilling its own responsibility. Here&rsquo;s a visualisation of service orchestration in action:</p>
+
+<p><a href="/images/service_orchestration.png"><img class="center" src="/images/service_orchestration.png"></a></p>
+
+<p>In this example, service A is dependent on both service B and service C when handling its own inbound HTTP calls. Service A fetches state X (from service B) state Y (from service C), aggregating them with some of its own state, Z, to finally yield an HTTP response to its callers. Failures in either B or C will prevent A from fully fulfilling its responsibilities &ndash; it may be able to degrade gracefully but the ability to do so really depends on context.</p>
+
+<p>Contrast this scenario with service <em>choreography</em> instead. In a system designed to embrace choreography, services will typically avoid synchronous coupling &ndash; i.e. any integration between services does not apply during the usual request/response cycle. In such cases, a service can fulfill its responsibilities within the request/response cycle without the need to make further calls to other services (with the exception of persistence backends owned solely by the service).</p>
+
+<p>The classic way to achieve this is via embracing an event-driven (message passing) approach to integration. That is, any state that a service requires from services external to it, is projected internally from event streams published by those external services. Such internal projections will be managed and updated completely asynchronously (outside of the request/response cycle), and thus will be eventually consistent. In the true spirit of microservices, the service entirely encapsulates all the persistent state it requires in order to fulfill its responsibilities, thus achieving true isolation and autonomy.</p>
+
+<p>Let&rsquo;s refactor the previous diagram to reflect choreography instead of orchestration:</p>
+
+<p><a href="/images/service_choreography.png"><img class="center" src="/images/service_choreography.png"></a></p>
+
+<p>In this updated approach, service A receives events from streams published by service B and service C. Service A processes events in an eventually consistent manner, and persists locally only what it needs of state X and Y, alongside its own state, Z. When handling an incoming request, service A does not need to communicate with service B or service C.</p>
+
+<h2>Clarifying asynchronous integration in service choreography</h2>
+
+<p>I feel there&rsquo;s some confusion where people refer to asynchronous communication, especially in the field of microservices integration. It&rsquo;s worth some time to clarify what&rsquo;s meant in the context of service choreography.</p>
+
+<p>What it&rsquo;s not:</p>
+
+<ul>
+<li><p><strong>Non-blocking I/O</strong> &ndash; I&rsquo;m an advocate of asynchronous, non-blocking I/O as part of building more efficient, resilient and scalable services that interact in some way with external I/O. However, in the context of service choreography, this is certainly not what we mean by asynchronous integration. Non-blocking I/O could still be used within the request/response cycle for orchestration use cases, and thus, whilst it has its advantages in one sense, certainly doesn&rsquo;t, on its own, buy any architectural benefits of isolation and autonomy.</p></li>
+<li><p><strong>Classic MQ Request/Reply</strong> &ndash; It&rsquo;s possible using classic MQ technology (e.g. JMS, AMQP) to achieve asynchronous request/reply behaviour. You could pop a message on a queue, and wait for a response on some temporary reply queue. There&rsquo;s certainly some added decoupling in that the caller needn&rsquo;t know exactly who will reply, but, like with non-blocking I/O, if this is being done as part of a service handling an incoming request, then, despite the communication with the MQ itself being asynchronous in nature, the service is still not acting autonomously. If a consumer responsible for replying is down, and thus the call must timeout, it&rsquo;s ultimately no different to an HTTP endpoint being unavailable or failing.</p></li>
+</ul>
+
+
+<p>So, to clarify things then. When we&rsquo;re talking about services being integrated asynchronously as part of service choreography, we&rsquo;re referring to a service being <em>free from the need to rely on its dependencies during the request/response lifecycle</em>.</p>
+
+<h2>End-to-end autonomy</h2>
+
+<p>Where I&rsquo;ve covered isolation and autonomy in this post, I&rsquo;ve been referring to <em>runtime</em> autonomy. It&rsquo;s worth noting that a strong motivation for isolating services is the autonomy they additionally afford throughout the entire engineering process. The event-driven integration nature of service choreography sits very naturally with the desire to assign clear ownership to specific teams, enabling them to develop, build and test and release independently. Whilst there are techniques to support these things alongside service orchestration, I find it much easier to reason about isolation and independence when service dependencies are largely confined to the background.</p>
+
+<p>When considering service/API level tests, embracing eventually consistent, event-driven integration allows you to focus on data fixtures as opposed to service virtualisation. There&rsquo;s something inherently more simple &ndash; in my mind &ndash; about placing a system into a desired state via a simulated event stream, rather than having to worry about mocking/stubbing/virtualising some external service endpoint(s).</p>
+
+<h2>Added complexity?</h2>
+
+<p>Service choreography, without doubt, introduces a level of technical complexity beyond orchestration. Rather than the apparent simplicity of making calls to dependencies in real-time, you need to both produce events yourself and consume events from others &ndash; this requires a fundamental shift in the way you build software. It exposes you to such challenges as guaranteeing at-least-once-delivery/processing of events, handling out of order events, ensuring idempotency in event consumers, factoring in eventual consistency in the UI etc.</p>
+
+<p>Like with anything in software engineering, it&rsquo;s all about tradeoffs. There&rsquo;s no silver bullet, and you have to make a call based on your own unique circumstances. There will always be times where the simplicity of orchestration will trump its limitations on autonomy. Making such calls is why experience matters and why there will always be room for judgement in engineering.</p>
+
+<p>For example, a team looking after multiple related microservices may decide that it&rsquo;s ok for services internal to their boundary to use orchestration, reserving choreography solely for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
+
+<p>As a general system wide architectural constraint, I&rsquo;d aim to enforce service choreography between services owned by different teams, and grant individual teams the flexibility to mix and match within their own boundaries.</p>
+
+<h2>Touching on boundaries</h2>
+
+<p>Whilst service choreography enables autonomy, the elephant in the room is that a dependency is still a dependency, whether it be event-driven or not. If a service is required to consume from a large number of event streams, it&rsquo;s still adding overhead in terms of managing the dependencies over time.</p>
+
+<p>One of the fundamental mistakes people make with microservices is to draw technical boundaries rather than boundaries of business capability/purpose. The use of the word &ldquo;micro&rdquo; is surely partly to blame, as it may appear to encourage highly granular service responsibilities. By breaking up a monolith into services of a highly technical nature, with little correlation to the business domain, you&rsquo;re inevitably going to introduce more dependencies, thus more overhead. Too many dependencies of any variety is almost certainly a design smell, a sign of high coupling and low cohesion, when it&rsquo;s the exact opposite we&rsquo;re looking for. If you&rsquo;re stuck with lots of dependencies, it&rsquo;s a sure fire way of spotting that you&rsquo;ve drawn your boundaries wrong. If you&rsquo;ve managed to identify a genuine business capability, you&rsquo;ll be surprised at its fairly natural properties of isolation and independence.</p>
+
+<p>Domain-Driven Design equips us with the toolset &ndash; and mindset &ndash; to identify business-oriented boundaries, and there&rsquo;s certainly reason to see a close relationship between microservice boundaries and Bounded Contexts as described in DDD. Whilst I don&rsquo;t consider there to be a direct 1:1 mapping in every circumstance (a good subject for another post), there are definitely some parallels to draw.</p>
+
+<p>One way to go about reasoning about the need to introduce a dependency on an external event stream is to pedantically question the purpose of having that dependency in the first place. You may begin to find that you&rsquo;re tending to introduce such dependencies for the purpose of presenting data in a UI rather than for fulfilling specific business logic within your service boundary. In such cases, it can be preferable to rely on data aggregation/composition in the UI layer (where it&rsquo;s generally a little more acceptable/inevitable to rely on orchestration). When applying Domain-Driven Design to model business complexity, it&rsquo;s advisable to be ruthless about business purpose within any Bounded Context, and that means avoiding projecting state from external services if your service doesn&rsquo;t <em>really</em> need it.</p>
+
+<h2>Coming next</h2>
+
+<p>That wraps up part one of this two part series. I&rsquo;ll be following up soon with part two within which I&rsquo;ll be evaluating the suitability of specific implementation technologies. Stay tuned!</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -804,157 +916,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/">Access Logs in Play! Using RequestHeader Tags</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-14T13:30:00+01:00" pubdate data-updated="true">Jul 14<span>th</span>, 2013</time>
-        
-         | <a href="/blog/2013/07/14/access-logs-in-play-using-requestheader-tags/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>Log files as event streams</h2>
-
-<p>Having long been a fan of treating <a href="http://12factor.net/logs">log files as streams of events</a> (JSON formatted), I thought it would be useful to share a little bit of code to demonstrate how to achieve access style logging in a Play application. There&rsquo;s certainly more than one solution to this problem (there is, for example, a nice little plugin here: <a href="https://github.com/briannesbitt/play-accesslog">https://github.com/briannesbitt/play-accesslog</a>), but I wanted to share a little snippet of code &ndash; I&rsquo;ve used plenty of times in my own applications &ndash; utilising the RequestHeader tags feature in Play!.</p>
-
-<p>Just after starting this post, I noticed another great <a href="http://matthiasnehlsen.com/blog/2013/07/09/transforming-logs-into-information/">article</a> from <a href="https://twitter.com/matthiasnehlsen">@matthiasnehlsen</a> about using <a href="http://kibana.org/">Kibana</a> to store log events generated in Play applications. Kibana is a great tool &ndash; backed by the awesome Elasticsearch &ndash; and I also highly recommend it. I won&rsquo;t go into any detail in this article about sending logs to Kibana as Matthias has done a great job of doing that :&ndash;) Suffice to say, though, the information in my article here would certainly play nicely with Kibana &ndash; I simply want to make you aware of how you can extract some useful information from Play to enhance your log events no matter where you might wish to send them (log files included!).</p>
-
-<h2>RequestHeader tags</h2>
-
-<p>So&hellip;back to this feature &ndash; <code>RequestHeader</code> tags! It turns out that Play associates some very useful &lsquo;tags&rsquo; along with the <code>RequestHeader</code> generated for each request. You can get hold of this <code>Map</code> of tags by calling <code>RequestHeader.tags</code>.</p>
-
-<p>Given this learning, we can build a Play <code>EssentialFilter</code> &ndash; that will wrap every request &ndash; and log the JSON formatted request information to the Play <code>Logger</code>.</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">AccessLogFilter</span> <span class="k">extends</span> <span class="nc">EssentialFilter</span> <span class="o">{</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">val</span> <span class="n">dateTimeFormat</span> <span class="k">=</span> <span class="nc">ISODateTimeFormat</span><span class="o">.</span><span class="n">ordinalDateTimeNoMillis</span><span class="o">()</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">next</span><span class="k">:</span> <span class="kt">EssentialAction</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">EssentialAction</span> <span class="o">{</span>
-</span><span class='line'>    <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">rh</span><span class="k">:</span> <span class="kt">RequestHeader</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
-</span><span class='line'>      <span class="k">val</span> <span class="n">startTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="k">def</span> <span class="n">logTime</span><span class="o">(</span><span class="n">result</span><span class="k">:</span> <span class="kt">PlainResult</span><span class="o">)</span><span class="k">:</span> <span class="kt">Result</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">val</span> <span class="n">event</span> <span class="k">=</span> <span class="nc">Json</span><span class="o">.</span><span class="n">obj</span><span class="o">(</span>
-</span><span class='line'>          <span class="s">&quot;uri&quot;</span> <span class="o">-&gt;</span> <span class="n">rh</span><span class="o">.</span><span class="n">uri</span><span class="o">,</span>
-</span><span class='line'>          <span class="s">&quot;timestamp&quot;</span> <span class="o">-&gt;</span> <span class="n">dateTimeFormat</span><span class="o">.</span><span class="n">print</span><span class="o">(</span><span class="k">new</span> <span class="nc">DateTime</span><span class="o">),</span>
-</span><span class='line'>          <span class="s">&quot;execution_time&quot;</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span> <span class="o">-</span> <span class="n">startTime</span><span class="o">),</span>
-</span><span class='line'>          <span class="s">&quot;status&quot;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">status</span><span class="o">,</span>
-</span><span class='line'>          <span class="s">&quot;tags&quot;</span> <span class="o">-&gt;</span> <span class="nc">Json</span><span class="o">.</span><span class="n">toJson</span><span class="o">(</span><span class="n">rh</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">entry</span> <span class="k">=&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">toLowerCase</span> <span class="o">-&gt;</span> <span class="n">entry</span><span class="o">.</span><span class="n">_2</span><span class="o">))</span>
-</span><span class='line'>        <span class="o">)</span>
-</span><span class='line'>        <span class="nc">Logger</span><span class="o">.</span><span class="n">info</span><span class="o">(</span><span class="nc">Json</span><span class="o">.</span><span class="n">stringify</span><span class="o">(</span><span class="n">event</span><span class="o">))</span>
-</span><span class='line'>        <span class="n">result</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>
-</span><span class='line'>      <span class="n">next</span><span class="o">(</span><span class="n">rh</span><span class="o">).</span><span class="n">map</span> <span class="o">{</span>
-</span><span class='line'>        <span class="k">case</span> <span class="n">plain</span><span class="k">:</span> <span class="kt">PlainResult</span> <span class="o">=&gt;</span> <span class="n">logTime</span><span class="o">(</span><span class="n">plain</span><span class="o">)</span>
-</span><span class='line'>        <span class="k">case</span> <span class="n">async</span><span class="k">:</span> <span class="kt">AsyncResult</span> <span class="o">=&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">transform</span><span class="o">(</span><span class="n">logTime</span><span class="o">)</span>
-</span><span class='line'>      <span class="o">}</span>
-</span><span class='line'>    <span class="o">}</span>
-</span><span class='line'>  <span class="o">}</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>On top of adding the tags (and some other available request info) to the JSON object, you&rsquo;ll see the execution time is also captured alongside. To enable this filter, we simply create a custom <code>Global.scala</code>, in the default package:</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='scala'><span class='line'><span class="k">object</span> <span class="nc">Global</span> <span class="k">extends</span> <span class="nc">WithFilters</span><span class="o">(</span><span class="nc">AccessLogFilter</span><span class="o">)</span> <span class="o">{</span>
-</span><span class='line'><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Here is an example log line generated by this filter (prettified for readability):</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='json'><span class='line'><span class="p">{</span>
-</span><span class='line'>   <span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;/search/*&quot;</span><span class="p">,</span>
-</span><span class='line'>   <span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="s2">&quot;2013-194T18:14:27+01:00&quot;</span><span class="p">,</span>
-</span><span class='line'>   <span class="nt">&quot;execution_time&quot;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span>
-</span><span class='line'>   <span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span>
-</span><span class='line'>   <span class="nt">&quot;tags&quot;</span><span class="p">:{</span>
-</span><span class='line'>      <span class="nt">&quot;route_verb&quot;</span><span class="p">:</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span>
-</span><span class='line'>      <span class="nt">&quot;route_action_method&quot;</span><span class="p">:</span><span class="s2">&quot;search&quot;</span><span class="p">,</span>
-</span><span class='line'>      <span class="nt">&quot;route_pattern&quot;</span><span class="p">:</span><span class="s2">&quot;/search/$searchString&quot;</span><span class="p">,</span>
-</span><span class='line'>      <span class="nt">&quot;route_controller&quot;</span><span class="p">:</span><span class="s2">&quot;controllers.Application&quot;</span><span class="p">,</span>
-</span><span class='line'>      <span class="nt">&quot;route_comments&quot;</span><span class="p">:</span><span class="s2">&quot;Root action&quot;</span>
-</span><span class='line'>   <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>One of the most useful things about capturing the tags is that you get easy access to &lsquo;normalized&rsquo; actions/endpoints. So, it&rsquo;s immediately easy (e.g. in a tool like Kibana) to pick all log events related to a specific action. The URI alone is not good enough because parameterized path variables, or query string parameters, lead to non-unique URI representations for the same logical action bindings.</p>
-
-<p>As the filter wraps every request, you will see log lines generated for static assets too &ndash; something that is most likely too verbose for most use cases. It&rsquo;s not too hard to apply filtering to the URI extension to ignore assets, but I left it out of the example code for the sake of cleanliness.</p>
-
-<p>Keep on logging!</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -979,6 +940,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/">The art of microservices integration using service choreography</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/02/08/twelve-factor-config-and-docker/">Twelve-factor config and Docker</a>
       </li>
     
@@ -994,10 +959,6 @@
         <a href="/blog/2014/10/02/lessons-from-my-first-startup-failure/">Lessons from my first startup failure</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2013/12/07/what-a-storming-idea/">What a storming idea</a>
-      </li>
-    
   </ul>
 </section>
 <section>
@@ -1011,7 +972,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2015 - Andrew Easter -
+  Copyright &copy; 2016 - Andrew Easter -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

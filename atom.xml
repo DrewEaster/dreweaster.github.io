@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2016-05-09T08:02:27+01:00</updated>
+  <updated>2016-05-09T08:45:02+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -66,7 +66,7 @@
 
 <h2>End-to-end autonomy</h2>
 
-<p>Where I&rsquo;ve covered isolation and autonomy in this post, I&rsquo;ve been referring to <em>runtime</em> autonomy. It&rsquo;s worth noting that a strong motivation for isolating services is the autonomy they additionally afford throughout the entire engineering process. The event-driven integration nature of service choreography sits very naturally with the desire to assign clear ownership to specific teams, enabling them to develop, build and test and release independently. Whilst there are techniques to support these things alongside service orchestration, I find it much easier to reason about isolation and independence when service dependencies are largely confined to the background.</p>
+<p>Where I&rsquo;ve covered isolation and autonomy in this post, I&rsquo;ve been referring to <em>runtime</em> autonomy. It&rsquo;s worth noting that a strong motivation for isolating services is the autonomy they additionally afford throughout the entire engineering process. The event-driven integration nature of service choreography sits very naturally with the desire to assign clear ownership to specific teams, enabling them to develop, build, test and release independently. Whilst there are techniques to support these things alongside service orchestration, I find it much easier to reason about isolation and independence when service dependencies are largely confined to the background.</p>
 
 <p>When considering service/API level tests, embracing eventually consistent, event-driven integration allows you to focus on data fixtures as opposed to service virtualisation. There&rsquo;s something inherently more simple &ndash; in my mind &ndash; about placing a system into a desired state via a simulated event stream, rather than having to worry about mocking/stubbing/virtualising some external service endpoint(s).</p>
 
@@ -78,7 +78,7 @@
 
 <p>For example, a team may decide that it&rsquo;s ok for services acting as companions to some primary service &ndash; thus invisible outside the boundary of that primary service &ndash; to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
 
-<p>Additionally, there are times when integrating with third-party services (outside your organisation) will necessitate a degree of orchestration given the limitations of the third-parties API contracts.</p>
+<p>Additionally, there are times when integrating with third-party services (outside your organisation) will necessitate a degree of orchestration given limitations in the third-party API contracts.</p>
 
 <p>As a general system wide architectural constraint, it&rsquo;s wise to be rigid about enforcing service choreography between services owned by different teams, and grant individual teams the flexibility to mix and match within their own boundaries. This has the added benefit of really helping to drive home the importance of good service boundaries &ndash; if your design relies on orchestration between services owned by different teams, there&rsquo;s a good chance you&rsquo;ve not found sensible business-oriented boundaries between your services. Which brings us nicely to&hellip;</p>
 

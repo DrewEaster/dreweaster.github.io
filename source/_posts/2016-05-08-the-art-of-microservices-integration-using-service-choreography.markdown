@@ -67,11 +67,11 @@ Service choreography, without doubt, introduces a level of technical complexity 
 
 Like with anything in software engineering, it's all about tradeoffs. There's no silver bullet, and you have to make a call based on your own unique circumstances. There will always be times where the simplicity of orchestration will trump its limitations on autonomy. Making such calls is why experience matters and why there will always be room for judgement in engineering.
 
-For example, a team may decide that it's ok for services acting as companions to some primary service - and so invisible outside the boundary of that primary service - to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they'll have from other teams, whilst losing some runtime autonomy internally.
+For example, a team may decide that it's ok for services acting as companions to some primary service - and so invisible outside the context of the service's public contract - to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they'll have from other teams, whilst losing some runtime autonomy internally.
 
 Additionally, there are times when integrating with third-party services (outside your organisation) will necessitate a degree of orchestration given limitations in the third-party API contracts.
 
-As a general system wide architectural constraint, it's wise to be rigid about enforcing service choreography between services owned by different teams, and grant individual teams the flexibility to mix and match within their own boundaries. This has the added benefit of really helping to drive home the importance of good service boundaries - if your design relies on orchestration between services owned by different teams, there's a good chance you've not found sensible business-oriented boundaries between your services. Which brings us nicely to...
+As a general system wide architectural constraint, it's wise to be rigid about enforcing service choreography between services owned by different teams. This has the added benefit of really helping to drive home the importance of good service boundaries - if your design relies on orchestration between services owned by different teams, there's a good chance you've not found sensible business-oriented boundaries between your services. A word of caution, though: where services are clearly aligned with business boundaries, choreography should be the preferred approach, even if the services are owned by the same team.
 
 Touching on boundaries
 ----------------------

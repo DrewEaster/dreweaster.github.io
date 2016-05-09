@@ -4,7 +4,7 @@
   <title><![CDATA[Category: event-driven-architecture | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/event-driven-architecture/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2016-05-09T10:22:14+01:00</updated>
+  <updated>2016-05-09T11:56:10+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -76,11 +76,11 @@
 
 <p>Like with anything in software engineering, it&rsquo;s all about tradeoffs. There&rsquo;s no silver bullet, and you have to make a call based on your own unique circumstances. There will always be times where the simplicity of orchestration will trump its limitations on autonomy. Making such calls is why experience matters and why there will always be room for judgement in engineering.</p>
 
-<p>For example, a team may decide that it&rsquo;s ok for services acting as companions to some primary service &ndash; and so invisible outside the boundary of that primary service &ndash; to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
+<p>For example, a team may decide that it&rsquo;s ok for services acting as companions to some primary service &ndash; and so invisible outside the context of the service&rsquo;s public contract &ndash; to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
 
 <p>Additionally, there are times when integrating with third-party services (outside your organisation) will necessitate a degree of orchestration given limitations in the third-party API contracts.</p>
 
-<p>As a general system wide architectural constraint, it&rsquo;s wise to be rigid about enforcing service choreography between services owned by different teams, and grant individual teams the flexibility to mix and match within their own boundaries. This has the added benefit of really helping to drive home the importance of good service boundaries &ndash; if your design relies on orchestration between services owned by different teams, there&rsquo;s a good chance you&rsquo;ve not found sensible business-oriented boundaries between your services. Which brings us nicely to&hellip;</p>
+<p>As a general system wide architectural constraint, it&rsquo;s wise to be rigid about enforcing service choreography between services owned by different teams. This has the added benefit of really helping to drive home the importance of good service boundaries &ndash; if your design relies on orchestration between services owned by different teams, there&rsquo;s a good chance you&rsquo;ve not found sensible business-oriented boundaries between your services. A word of caution, though: where services are clearly aligned with business boundaries, choreography should be the preferred approach, even if the services are owned by the same team.</p>
 
 <h2>Touching on boundaries</h2>
 

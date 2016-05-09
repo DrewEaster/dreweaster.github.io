@@ -4,7 +4,7 @@
   <title><![CDATA[Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2016-05-09T08:49:04+01:00</updated>
+  <updated>2016-05-09T10:22:14+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -42,7 +42,7 @@
 
 <p>Contrast this scenario with service <em>choreography</em> instead. In a system designed to embrace choreography, services will typically avoid synchronous coupling &ndash; i.e. any integration between services does not apply during the usual request/response cycle. In such cases, a service can fulfill its responsibilities within the request/response cycle without the need to make further calls to other services (with the exception of persistence backends owned solely by the service).</p>
 
-<p>The classic way to achieve this is via embracing an event-driven (message passing) approach to integration. That is, any state that a service requires from services external to it, is projected internally from event streams published by those external services. Such internal projections will be managed and updated completely asynchronously (outside of the request/response cycle), and thus will be eventually consistent. In the true spirit of microservices, the service entirely encapsulates all the persistent state it requires in order to fulfill its responsibilities, thus achieving true isolation and autonomy.</p>
+<p>The classic way to achieve this is via embracing an event-driven (message passing) approach to integration. That is, any state that a service requires from services external to it, is projected internally from event streams published by those external services. Such internal projections will be managed and updated completely asynchronously (outside of the request/response cycle), and will be eventually consistent. In the true spirit of microservices, the service entirely encapsulates all the persistent state it requires in order to fulfill its responsibilities, achieving true isolation and autonomy.</p>
 
 <p>Let&rsquo;s refactor the previous diagram to reflect choreography instead of orchestration:</p>
 
@@ -57,8 +57,8 @@
 <p>What it&rsquo;s not:</p>
 
 <ul>
-<li><p><strong>Non-blocking I/O</strong> &ndash; I&rsquo;m an advocate of asynchronous, non-blocking I/O as part of building more efficient, resilient and scalable services that interact in some way with external I/O. However, in the context of service choreography, this is certainly not what we mean by asynchronous integration. Non-blocking I/O could still be used within the request/response cycle for orchestration use cases, and thus, whilst it has its advantages in one sense, certainly doesn&rsquo;t, on its own, buy any architectural benefits of isolation and autonomy.</p></li>
-<li><p><strong>Classic MQ Request/Reply</strong> &ndash; It&rsquo;s possible using classic MQ technology (e.g. JMS, AMQP) to achieve asynchronous request/reply behaviour. You could pop a message on a queue, and wait for a response on some temporary reply queue. There&rsquo;s certainly some added decoupling in that the caller needn&rsquo;t know exactly who will reply, but, like with non-blocking I/O, if this is being done as part of a service handling an incoming request, then, despite the communication with the MQ itself being asynchronous in nature, the service is still not acting autonomously. If a consumer responsible for replying is down, and thus the call must timeout, it&rsquo;s ultimately no different to an HTTP endpoint being unavailable or failing.</p></li>
+<li><p><strong>Non-blocking I/O</strong> &ndash; I&rsquo;m an advocate of asynchronous, non-blocking I/O as part of building more efficient, resilient and scalable services that interact in some way with external I/O. However, in the context of service choreography, this is certainly not what we mean by asynchronous integration. Non-blocking I/O could still be used within the request/response cycle for orchestration use cases, and, whilst it has its advantages in one sense, certainly doesn&rsquo;t, on its own, buy any architectural benefits of isolation and autonomy.</p></li>
+<li><p><strong>Classic MQ Request/Reply</strong> &ndash; It&rsquo;s possible using classic MQ technology (e.g. JMS, AMQP) to achieve asynchronous request/reply behaviour. You could pop a message on a queue, and wait for a response on some temporary reply queue. There&rsquo;s certainly some added decoupling in that the caller needn&rsquo;t know exactly who will reply, but, like with non-blocking I/O, if this is being done as part of a service handling an incoming request, then, despite the communication with the MQ itself being asynchronous in nature, the service is still not acting autonomously. If a consumer responsible for replying is down, and the call must then timeout, it&rsquo;s ultimately no different to an HTTP endpoint being unavailable or failing.</p></li>
 </ul>
 
 
@@ -76,7 +76,7 @@
 
 <p>Like with anything in software engineering, it&rsquo;s all about tradeoffs. There&rsquo;s no silver bullet, and you have to make a call based on your own unique circumstances. There will always be times where the simplicity of orchestration will trump its limitations on autonomy. Making such calls is why experience matters and why there will always be room for judgement in engineering.</p>
 
-<p>For example, a team may decide that it&rsquo;s ok for services acting as companions to some primary service &ndash; thus invisible outside the boundary of that primary service &ndash; to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
+<p>For example, a team may decide that it&rsquo;s ok for services acting as companions to some primary service &ndash; and so invisible outside the boundary of that primary service &ndash; to use orchestration, reserving choreography for integrating with services owned by other teams. In this scenario, the team would still benefit from the greater independence they&rsquo;ll have from other teams, whilst losing some runtime autonomy internally.</p>
 
 <p>Additionally, there are times when integrating with third-party services (outside your organisation) will necessitate a degree of orchestration given limitations in the third-party API contracts.</p>
 
@@ -86,7 +86,7 @@
 
 <p>Whilst service choreography enables autonomy, the elephant in the room is that a dependency is still a dependency, whether it be event-driven or not. If a service is required to consume from a large number of event streams, it&rsquo;s still adding overhead in terms of managing the dependencies over time.</p>
 
-<p>One of the fundamental mistakes people make with microservices is to draw technical boundaries rather than boundaries of business capability/purpose. The use of the word &ldquo;micro&rdquo; is surely partly to blame, as it may appear to encourage highly granular service responsibilities. By breaking up a monolith into services of a highly technical nature, with little correlation to the business domain, you&rsquo;re inevitably going to introduce more dependencies, thus more overhead. Too many dependencies of any variety is almost certainly a design smell, a sign of high coupling and low cohesion, when it&rsquo;s the exact opposite we&rsquo;re looking for. If you&rsquo;re stuck with lots of dependencies, it&rsquo;s a sure fire way of spotting that you&rsquo;ve drawn your boundaries wrong. If you&rsquo;ve managed to identify a genuine business capability, you&rsquo;ll be surprised at its fairly natural properties of isolation and independence.</p>
+<p>One of the fundamental mistakes people make with microservices is to draw technical boundaries rather than boundaries of business capability/purpose. The use of the word &ldquo;micro&rdquo; is surely partly to blame, as it may appear to encourage highly granular service responsibilities. By breaking up a monolith into services of a highly technical nature, with little correlation to the business domain, you&rsquo;re inevitably going to introduce more dependencies, and accordingly more overhead. Too many dependencies of any variety is almost certainly a design smell, a sign of high coupling and low cohesion, when it&rsquo;s the exact opposite we&rsquo;re looking for. If you&rsquo;re stuck with lots of dependencies, it&rsquo;s a sure fire way of spotting that you&rsquo;ve drawn your boundaries wrong. If you&rsquo;ve managed to identify a genuine business capability, you&rsquo;ll be surprised at its fairly natural properties of isolation and independence.</p>
 
 <p>Domain-Driven Design equips us with the toolset &ndash; and mindset &ndash; to identify business-oriented boundaries, and there&rsquo;s certainly reason to see a close relationship between microservice boundaries and Bounded Contexts as described in DDD. Whilst I don&rsquo;t consider there to be a direct 1:1 mapping in every circumstance (a good subject for another post), there are definitely some parallels to draw.</p>
 

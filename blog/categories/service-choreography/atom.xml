@@ -4,7 +4,7 @@
   <title><![CDATA[Category: service choreography | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/service-choreography/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2016-06-12T16:47:58+01:00</updated>
+  <updated>2016-06-12T17:41:10+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -73,7 +73,7 @@ messageQueue.publish(new SomeEvent(...))
 
 <p>Hang on, that transaction boundary is bound to the database only; it&rsquo;s got nothing to do with the message queue technology. In this example, if our database transaction were to rollback for any reason, our event would still have been published to the message queue. Oh dear, the event we sent out to interested consumers is not consistent with our book of record. Our consumers will proceed to behave as if the event has taken place, but our local context (the source of the event) will have no knowledge of it ever having taken place. That&rsquo;s bad. Very bad. Arguably even worse than the first example.</p>
 
-<p>Let&rsquo;s get something straight here and now &ndash; unless we start dabbling in distributed transaction managers (e.g. XA standard), we can&rsquo;t atomically update a database and write to a message queue. Distributed transactions are a disease we want to quarantine ourselves from forever, so we need another way to escape from the dual-write problem. You&rsquo;ll have to wait until the third part of this mini-series for a solution ;&ndash;)</p>
+<p>Let&rsquo;s get something straight here and now &ndash; unless we start dabbling in distributed transaction managers (e.g. XA standard) and two-phase commits, we can&rsquo;t atomically update a database and write to a message queue. Two-phase commit is a disease we want to quarantine ourselves from forever, so we need another way to escape from the dual-write problem. You&rsquo;ll have to wait until the third part of this mini-series for a solution ;&ndash;)</p>
 
 <h4>Guaranteed message ordering</h4>
 

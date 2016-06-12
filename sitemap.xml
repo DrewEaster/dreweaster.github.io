@@ -70,15 +70,21 @@
         <loc>
             http://DrewEaster.github.io/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/
         </loc>
-        <lastmod>2016-05-09T11:56:04+01:00</lastmod>
+        <lastmod>2016-06-12T11:04:48+01:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://DrewEaster.github.io/blog/2016/06/09/practical-implementation-traits-of-service-choreography-based-microservices-integration/
+        </loc>
+        <lastmod>2016-06-12T11:04:50+01:00</lastmod>
     </url>
     <url>
         <loc>http://DrewEaster.github.io/blog/archives/</loc>
-        <lastmod>2016-05-09T11:56:04+01:00</lastmod>
+        <lastmod>2016-06-12T11:04:50+01:00</lastmod>
     </url>
     <url>
         <loc>http://DrewEaster.github.io/</loc>
-        <lastmod>2016-05-09T11:56:04+01:00</lastmod>
+        <lastmod>2016-06-12T11:04:50+01:00</lastmod>
     </url>
     <url>
         <loc>http://DrewEaster.github.io/robots.txt</loc>

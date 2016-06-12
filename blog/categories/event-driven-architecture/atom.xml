@@ -4,7 +4,7 @@
   <title><![CDATA[Category: event-driven-architecture | Responsibly Sourced]]></title>
   <link href="http://DrewEaster.github.io/blog/categories/event-driven-architecture/atom.xml" rel="self"/>
   <link href="http://DrewEaster.github.io/"/>
-  <updated>2016-06-12T11:05:09+01:00</updated>
+  <updated>2016-06-12T16:47:58+01:00</updated>
   <id>http://DrewEaster.github.io/</id>
   <author>
     <name><![CDATA[Andrew Easter]]></name>
@@ -123,7 +123,7 @@ messageQueue.publish(new SomeEvent(...))
 
 <h4>Parallelism</h4>
 
-<p>In an ideal world, we&rsquo;d want the ability the parallelise the processing capabilities of a specific consumer by starting multiple instances. A common pattern when using messaging middleware is to have a single queue with multiple consumers each being sent messages in a round-robin fashion, with no consumer receiving the same message. This approach works fine in scenarios where processing messages in order is not important. However, as discussed in the must-haves section, we&rsquo;ll often encounter the need for a consumer to process a stream of events strictly in order, especially when applying service choreography based integration. As also discussed earlier, it&rsquo;s rarely the case that a consumer cares to receive every event in order, more likely it&rsquo;s important that events that are related in some way to each other are processed from a stream in the order they were generated (e.g. events emanating from a specific aggregate instance). With this in mind, it&rsquo;s a nice-to-have to find a way to parallelise consumers, whilst still ensuring events related to each other are processed in order. By doing this we get these primary benefits:</p>
+<p>In an ideal world, we&rsquo;d want the ability to parallelise the processing capabilities of a specific consumer by starting multiple instances. A common pattern when using messaging middleware is to have a single queue with multiple consumers each being sent messages in a round-robin fashion, with no consumer receiving the same message. This approach works fine in scenarios where processing messages in order is not important. However, as discussed in the must-haves section, we&rsquo;ll often encounter the need for a consumer to process a stream of events strictly in order, especially when applying service choreography based integration. As also discussed earlier, it&rsquo;s rarely the case that a consumer cares to receive every event in order, more likely it&rsquo;s important that events that are related in some way to each other are processed from a stream in the order they were generated (e.g. events emanating from a specific aggregate instance). With this in mind, it&rsquo;s a nice-to-have to find a way to parallelise consumers, whilst still ensuring events related to each other are processed in order. By doing this we get these primary benefits:</p>
 
 <ol>
 <li>We can improve the performance of our system through horizontal scaling, reducing the latency of eventual consistency.</li>

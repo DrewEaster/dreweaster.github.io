@@ -5,7 +5,7 @@ date: 2016-05-08 22:10
 comments: true
 categories: [microservices, event-driven-architecture]
 ---
-This is the first post in a two part series looking at the topic of microservice integration. In this first instalment, I'll be focusing mainly on the theory side of event-driven service choreography. In the second part, I'll cover practical application of the techniques discussed in this first post, looking at the pros and cons of specific implementation technologies. So, let's get on with part one!
+This is the first post in a three part series looking at the topic of microservice integration. In this first instalment, I'll be focusing mainly on the theory side of event-driven service choreography. In the second post, I'll cover the implementation traits required to satisfy the theory discussed in this first post, and, in final post, I'll be assessing the support available for those traits in well known implementation technologies. So, let's get on with part one!
 
 Looking back
 ------------
@@ -87,4 +87,4 @@ One way to go about reasoning about the need to introduce a dependency on an ext
 Coming next
 -----------
 
-That wraps up part one of this two part series. I'll be following up soon with part two within which I'll be evaluating the suitability of specific implementation technologies. Stay tuned!
+That wraps up part one of this three part series. I'll be following up soon with part two within which I'll cover the implementation traits required to satisfy the theory discussed in this first post. Stay tuned!

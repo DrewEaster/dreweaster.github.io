@@ -1,0 +1,118 @@
+---
+layout: post
+title: "Practical implementation traits of service choreography based microservices integration"
+date: 2016-06-09 17:54
+comments: true
+categories: [microservices, event-driven-architecture, service choreography]
+---
+This is the second post in a three part series looking at the topic of microservice integration. In the [first instalment](http://www.dreweaster.com/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/), I focused mainly on the theory side of event-driven service choreography. In this second part, I'll dig into the practical traits that we'll require of our technical implementations that enable us to satisfy the theory discussed in the first post. In the final instalment of the series, I'll look at different specific implementation techniques/technologies and how they map to the traits discussed in this post.
+
+Implementation traits
+---------------------
+
+I'd like to provide some coverage on what I believe to be the key traits we look for in service choreography based microservices integration implementation techniques/technologies. My goal is to set the scene to make it easier to test specific technologies against those traits (subject of the third and final post in this series).
+
+I prefer to breakdown the traits into two categories: must-haves and nice-to-haves. The must-haves category contains traits that I believe are absolutely necessary in order to successfully apply the theory of service choreography. The nice-to-haves category contains traits that you can essentially live without, but can definitely buy you additional benefits. Like with most things, though, the decision to adopt nice-to-haves will be driven by context - we're always making trade-offs, and you simply have to make judgement calls on a case by case basis.
+
+Let's move on to the first category of traits, the must-haves!
+
+### Must-have traits
+
+#### Decoupled in time
+
+This one is pretty straightforward. In the [first instalment](http://www.dreweaster.com/blog/2016/05/08/the-art-of-microservices-integration-using-service-choreography/) of this series, I discussed the asynchronous nature of service choreography based integration. Whatever implementation direction we go in, it needs to support us decoupling services in _time_. This means, for example, service A does not require service B to be online at a specific point in time (now) - we just need to ensure we have some mechanism in place for events from service B to eventually reach service A at some point in the future.
+
+#### Guaranteed at-least-once-delivery
+
+An absolute pre-requisite for ensuring eventual consistency is that we guarantee events _eventually_ reach their interested consumers. But, why don't we aim for _exactly-once-delivery_ instead? I'm not going to repeat what many others have said before me, so suffice to say it's simply not possible to achieve it in a distributed system. Google is your friend if you want to explore why :-)
+
+So, we're happy to settle for _at-least-once-delivery_ because sending duplicates of a specific event is better than sending no event at all (that's what you might see with _at-most-once-delivery_). The ability to guarantee at-least-once-delivery also implies the need for _durability_.
+
+The biggest gotcha I see when it comes to at-least-once-delivery is what I've generally seen referred to as the _dual-write problem_. Whether you're using a traditional CRUD approach, or you're using eventsourcing, you are going to end up pretty unhappy if you have a unit of code that both writes to a datastore and delivers events to, say, a message queue. Let's examine two ways I've seen this done:
+
+##### Write to MQ after committing a database transaction
+
+    doInDatabaseTransaction { statement =>
+      statement.insert("INSERT into ....")
+    }
+    messageQueue.publish(new SomeEvent(...))
+
+Okay, so we make changes to the book of record (the database), the database transaction gets committed, and only once that happens, do we publish an event to the message queue where our interested consumers will be listening. This would work perfectly well in a world where nothing bad ever happens. But there are all sorts of things that can go wrong here, including the most obvious:
+
+1. Our application crashes immediately after the database transaction commits
+2. Our application is restarted immediately after the database transaction commits
+3. The message queue infrastructure is down for a few minutes, meaning we can't send the event right now
+
+In any of these cases, our book of record would be updated, but our downstream consumers would never receive the event. In one fell swoop, we've guaranteed that we'll end up in an inconsistent state. You may say these circumstances are rare, and you'd be right, but Murphy's Law - and our own experiences as software engineers - teaches us that if it can go wrong, it will go wrong. Guaranteed.
+
+Let's try another approach...
+
+##### Write to MQ within scope of a database transaction
+
+    doInDatabaseTransaction { statement =>
+      statement.insert("INSERT into ....")
+      messageQueue.publish(new SomeEvent(...))
+    }
+
+Hang on, that transaction boundary is bound to the database only; it's got nothing to do with the message queue technology. In this example, if our database transaction were to rollback for any reason, our event would still have been published to the message queue. Oh dear, the event we sent out to interested consumers is not consistent with our book of record. Our consumers will proceed to behave as if the event has taken place, but our local context (the source of the event) will have no knowledge of it ever having taken place. That's bad. Very bad. Arguably even worse than the first example.
+
+Let's get something straight here and now - unless we start dabbling in distributed transaction managers (e.g. XA standard), we can't atomically update a database and write to a message queue. Distributed transactions are a disease we want to quarantine ourselves from forever, so we need another way to escape from the dual-write problem. You'll have to wait until the third part of this mini-series for a solution ;-)
+
+#### Guaranteed message ordering
+
+The need for a stream of events to be consumable in order really depends on the use cases of its consumers. Very broadly speaking, there are two categories of consumer use case:
+
+1. Consumers that consume events from another service where consumption results in state transitions in the local context (e.g. projecting state locally from an external bounded context). Such consumers are conceptually _stateful_ in that they care about tracking state across a series of multiple related events over time. In such cases, it's usually necessary to process the events in the order they were originally produced for the local state to remain consistent with the source. It's important to emphasise that it is only related events for which the order is necessary (e.g. events emanating from a specific aggregate instance).
+
+2. Consumers that are conceptually _stateless_ in that they can treat every event they encounter as if it's completely unrelated to any other event they've encountered in the past. Such consumers will typically trigger some kind of one off action, such as sending an email, sending a push notification, or triggering an external API call. An example of this might be where the reaction to an event requires charging a credit card via a third-party payment gateway.
+
+Given that service choreography will inherently lead to many instances of use case 1) in your services, it becomes inevitable that you make implementation choices that allow events to be consumed in the order they were produced. With this in mind, it makes sense to choose implementation techniques/technologies that provide this guarantee, even if some of your consumers don't rely on ordering.
+
+#### Guaranteed at-least-once-processing
+
+Well, I guess what we really want is _exactly-once-processing_! However, I thought it would be helpful to write a separate subsection on idempotency (see below). I find it useful to separate the general action of processing from the outcome of the processing - even if we handle a message/event idempotently (e.g. through some method of deduplication), I still like to consider that the message/event has been processed, despite the absence of any side effects. I find it simpler to think of processing as meaning a consumer has handled a message/event and is now ready to handle the next one in the stream.
+
+It's really important to emphasise the word 'eventual' in eventual consistency. Whilst it seems obvious, I have seen people neglect the fact that eventual does mean that something will _definitely happen_ in the end. Yes, we acknowledge that consistency may be delayed, but we still rely on consistency being achieved in the end. Where we're going down the microservices path - and following the service choreography approach - we need, in many cases, cast iron guarantees that we'll eventually process every event we're interested in. For example, if we are projecting state locally (achieving autonomy and encapsulated persistence) based on events produced by another service (bounded context), and our local business logic relies on that state, we can have zero trust in the entire system if we can't guarantee that we'll successfully process every event we're interested in.
+
+A murky subtext here is how to deal with processing errors. Whatever the reason for an error during handling of an event, you are forced to consider the fact that, if you continue to process further events without processing the event raising the error, you could leave your system in a permanently inconsistent state. Where it's absolutely necessary for a consumer to handle events in order, you really are forced to block all subsequent processing until you've found a way to successfully process the event that's raising an error. There's an obvious danger here that your target SLA on eventual consistency could be quickly blown out the water if, for example, the solution to the failed processing involved code changes. As discussed above, ordering is rarely a requirement across every event in a stream. With this in mind, the ability to achieve some form of parallelism in event handling may well be necessary to avoid complete gridlock in a specific consumer. I'll discuss this in the nice-to-haves section.
+
+Where the requirement to process events in order can be relaxed, dealing with processing errors can be a little more straightforward. An option might be to log the event raising an error (after exhausting retries), and move on to subsequent events in the stream. You could put in place some mechanism to replay from the error log once necessary work has been carried out to ensure the event can be successfully processed.
+
+In some circumstances, it may even be ok to never process an event. For example, consider an email notification use case. Given that processing failure rates are likely to be pretty low in normal operation, you may deem it acceptable for the odd system email to never reach an intended customer.
+
+#### Idempotency
+
+Given the inability to achieve exactly-once-delivery, and instead falling back to at-least-once-delivery, we can't just ignore the fact that consumers will, on occasion, encounter the same event more than once. Idempotency is a property of an event handler that allows the same event to be applied multiple times without any new side effects beyond the initial application. In some cases, it might be ok to live with repeated side effects, and in some cases it won't be ok. For example, we might not mind if we send a duplicate email, but a customer won't be too happy if we charge their credit card twice for the same order.
+
+Some actions are naturally idempotent, in which case you don't need to explicitly worry about duplicate application, but there are many cases where it's going to matter, and so you need to introduce mechanisms to avoid duplicate application. I'm going to resist exploring patterns for idempotent event handling in this series of posts, as it warrants dedicated coverage of its own. Mechanisms for implementing idempotency are typically application level concerns, rather than, for example, being something you can rely on some middleware layer to handle for you. Whatever implementation mechanisms you choose to integrate services via asynchronous events, you'll need to deal with ensuring idempotency in the way you handle the events.
+
+On a side note, it's worth mentioning that some third-party, external services you integrate with may give you some help in this area. For example, [Stripe's](http://www.stripe.com) API supports passing an 'idempotency key' with a request, and it guarantees that, in a 24 hour window, it won't reprocess two API calls that share the same key.
+
+### Nice-to-have traits
+
+#### Consumer-side failure recovery
+
+I was very close to including this trait within the must-haves group, but decided to be lenient. Now that we understand autonomy to be a key attribute for reactive microservices, it follows, in my opinion, that consumers must be responsible for recovering from their own failures without burdening upstream sources of events. I've worked with message oriented systems where a producer of events is relied upon to re-dispatch messages in the event a downstream consumer has got itself in a mess. It strikes me that such an approach is not compliant with the autonomy objective - if a consumer is dependent on a producer going beyond its operational responsibilities to help it recover from failure, the autonomy of that consumer is called in to question.
+
+This trait drives an alternative way of thinking from more traditional forms of middleware and/or integration patterns. In the third part of this series of posts, I'll look at how distributed commit log technologies (such as Apache Kafka and Amazon Kinesis) have a considerable advantage over traditional MQ and pub/sub technologies in regard to this nice-to-have integration trait. It boils down to inversion of control, whereby the responsibility for tracking a consumer's progress through a stream of events becomes the responsibility of the consumer rather than a central messaging broker.
+
+#### Decoupled in space
+
+In the must-haves section, I covered the trait of integration being decoupled in time. Going a stage further, you can aim for services to be decoupled in space as well. Anyone who has worked with a service-oriented architecture, especially where synchronous integration between services is the norm, will be familiar with the challenge of service addressability. Dealing with the overhead of managing configuration for many service endpoints can be quite a burden.
+
+If we're able to remove this overhead in some way, thus achieving significant location transparency, it can further simplify our service integration challenges. Using middleware technology is a great way of achieving this. Decoupling in space is also possible without middleware - contemporary service discovery/locator patterns do facilitate this to some extent - and I'll weigh up the two approaches in the third and final post of this series.
+
+#### Parallelism
+
+In an ideal world, we'd want the ability the parallelise the processing capabilities of a specific consumer by starting multiple instances. A common pattern when using messaging middleware is to have a single queue with multiple consumers each being sent messages in a round-robin fashion, with no consumer receiving the same message. This approach works fine in scenarios where processing messages in order is not important. However, as discussed in the must-haves section, we'll often encounter the need for a consumer to process a stream of events strictly in order, especially when applying service choreography based integration. As also discussed earlier, it's rarely the case that a consumer cares to receive every event in order, more likely it's important that events that are related in some way to each other are processed from a stream in the order they were generated (e.g. events emanating from a specific aggregate instance). With this in mind, it's a nice-to-have to find a way to parallelise consumers, whilst still ensuring events related to each other are processed in order. By doing this we get these primary benefits:
+
+1. We can improve the performance of our system through horizontal scaling, reducing the latency of eventual consistency.
+2. It's easier to implement high availability of consumers rather than have single points of failure.
+3. We can avoid a consumer use case being completely blocked when encountering a repeated error in processing a single event. If we're able to parallelise in some way, we can at least have that consumer use case continue processing some events (as long as they aren't related to the stubborn one) rather than stopping processing altogether.
+
+In the third part of this series of posts, I'll look at the technology options available to us that enable both guaranteed in-order processing _and_ parallel consumers.
+
+Wrapping up
+-----------
+
+Phew, that's the end of a long post! I've covered both the must-have traits and the nice-to-have traits of microservices integration implementations that are supportive of service choreography. In the third and final post of this series, I'll at last get round to looking at specific technologies and techniques that enable us to satisfy these traits. Stay tuned!
